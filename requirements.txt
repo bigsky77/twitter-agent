@@ -1,13 +1,6 @@
 openai==0.27.4
 pinecone-client==2.2.1
 python-dotenv
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> c4df4c7 (fix: update requirements)
-tiktoken
->>>>>>> 1c24e01 (fix: update requirements)
 deeplake
 langchain
 redis
