@@ -2,8 +2,8 @@ import os, yaml, json
 import main
 from dotenv import load_dotenv
 #from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
-from langchain.requests import RequestsWrapper
-from langchain.llms.openai import OpenAI
+#from langchain.requests import RequestsWrapper
+#from langchain.llms.openai import OpenAI
 #from langchain.agents.agent_toolkits.openapi import planner
 from flask import Flask, request, redirect, session
 
