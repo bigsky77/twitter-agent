@@ -2,12 +2,9 @@ import os, yaml, json
 import main
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
-from flask import Flask, request, redirect, session
-
-# Flask app setup
-app = Flask(__name__)
-app.secret_key = os.urandom(50)
-
+from langchain.prompts import PromptTemplate
+from langchain.llms import OpenAI
+from langchain.chains import LLMChain
 
 load_dotenv()
 
@@ -35,9 +32,15 @@ j_refreshed_token = json.loads(st_refreshed_token)
 main.r.set("token", j_refreshed_token)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-llm = ChatOpenAI(temperature=0.5)
 
-result = llm("Tell me a joke about a hungry robot!  Use emojis if you can!")
+llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.45)
+prompt = PromptTemplate(
+    input_variables=["product"],
+    template="You are a hungry robbot who loves to tweet about {product}. What do you tweet?.  Always use emojis"
+)
+chain = LLMChain(llm=llm, prompt=prompt)
+
+result = chain.run("pizza and AI")
 payload = {
             "text": result,
         }
@@ -60,6 +63,3 @@ main.post_tweet(payload, refreshed_token)
 #user_query = "Send a message to user @BigSky_7 wishing them an awesome day!"
 #
 #twitter_agent.run(user_query)
-
-if __name__ == "__main__":
-    app.run()
