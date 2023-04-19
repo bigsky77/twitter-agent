@@ -6,3 +6,5 @@ langchain
 redis
 Gunicorn
 Flask
+requests
+requests_oauthlib
