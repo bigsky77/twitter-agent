@@ -1,6 +1,7 @@
 import os, yaml, json
 import main
 from dotenv import load_dotenv
+from langchain.chat_models import ChatOpenAI
 #from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
 #from langchain.requests import RequestsWrapper
 #from langchain.llms.openai import OpenAI
@@ -32,9 +33,11 @@ j_refreshed_token = json.loads(st_refreshed_token)
 main.r.set("token", j_refreshed_token)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+llm = ChatOpenAI(temperature=0.5)
 
+result = llm("Tell me a joke about a hungry robot!  Use emojis if you can!")
 payload = {
-            "text": "HUNGRY ROBOT MUST EAT!!!",
+            "text": result,
         }
 
 main.post_tweet(payload, refreshed_token)
