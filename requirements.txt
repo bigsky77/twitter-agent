@@ -7,7 +7,7 @@ Flask
 requests
 requests_oauthlib
 tweepy
-langchain==0.0.144
+langchain
 redis
 numpy
 pandas
