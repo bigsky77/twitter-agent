@@ -1,7 +1,6 @@
 import tweepy
 import os
 from dotenv import load_dotenv
-import yaml
 from langchain.agents import AgentType, Tool, initialize_agent
 from langchain.chat_models import ChatOpenAI
 
@@ -50,5 +49,5 @@ agent = initialize_agent(
 )
 
 result = agent.run(
-   "write a tweet about how you are about to workout!  Strong robots good robots!"
+   "write a tweet about how twitter is like the mempool for artifical intelligence",
 )
