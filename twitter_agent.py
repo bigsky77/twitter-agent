@@ -39,7 +39,7 @@ main.r.set("token", j_refreshed_token)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-with open("data/twitter_openapi.yaml") as f:
+with open("./twitter_openapi.yaml") as f:
     raw_twitter_api_spec = yaml.load(f, Loader=yaml.Loader)
 twitter_api_spec = reduce_openapi_spec(raw_twitter_api_spec)
 
