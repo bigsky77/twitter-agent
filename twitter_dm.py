@@ -7,19 +7,20 @@ from langchain.requests import RequestsWrapper
 from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.tools import BaseTool
 from langchain.agents import AgentType, Tool, initialize_agent, tool
+from langchain.chat_models import ChatOpenAI
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 
-API_KEY = "EZFpo0SUy5ytW3p3HEIbocZz6"
-API_SECRET_KEY = "dtS2hHf6YMmk0lTUFKWFKy3K17LVwe6xyxEcU6rhqqtt2ieC2o"
-ACCESS_TOKEN = "1614799524580712449-wynFln05gFqRCviC3e3tO7ina6MDc1"
-ACCESS_TOKEN_SECRET = "RyZmDFbD6uiRA5O46jaB8rS10PCbTRZM8iwKepmoqxoSH"
+api_key = os.getenv("API_KEY", "")
+api_secret_key = os.getenv("API_SECRET_KEY", "")
+access_token = os.getenv("ACCESS_TOKEN", "")
+access_token_secret = os.getenv("ACCESS_TOKEN_SECRET", "")
 
 auth = tweepy.OAuth1UserHandler(
-    API_KEY, API_SECRET_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
+    api_key, api_secret_key, access_token, access_token_secret
 )
 
 api = tweepy.API(auth)
@@ -47,10 +48,11 @@ tools = [
    ),
 ]
 
+llm = ChatOpenAI(temperature=0.5)
 agent = initialize_agent(
    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
 
 result = agent.run(
-   "how many people are in the world?",
+   "send BigSky a message saying hello",
 )

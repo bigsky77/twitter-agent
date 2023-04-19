@@ -45,24 +45,7 @@ headers = {
 }
 requests_wrapper = RequestsWrapper(headers=headers)
 
-endpoints = [
-    (route, operation)
-    for route, operations in raw_twitter_api_spec["paths"].items()
-    for operation in operations
-    if operation in ["get", "post"]
-]
-len(endpoints)
-
-enc = tiktoken.encoding_for_model("text-davinci-003")
-
-
-def count_tokens(s):
-    return len(enc.encode(s))
-
-
-count_tokens(yaml.dump(raw_twitter_api_spec))
-
-llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.45)
+llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.45)
 twitter_agent = planner.create_openapi_agent(twitter_api_spec, requests_wrapper, llm)
 
 user_query = "Send a message to user @BigSky_7 wishing them an awesome day!"
