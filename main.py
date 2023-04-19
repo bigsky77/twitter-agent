@@ -23,8 +23,8 @@ client_id = os.getenv("CLIENT_ID", "")
 client_secret = os.getenv("CLIENT_SECRET", "")
 auth_url = "https://twitter.com/i/oauth2/authorize"
 token_url = "https://api.twitter.com/2/oauth2/token"
-redirect_uri = os.getenv("REDIRECT_URI", "")
-
+#redirect_uri = os.getenv("REDIRECT_URI", "")
+redirect_uri = "https://twitter-agent.onrender.com/oauth/callback"
 # set scope
 scope = ["tweet.read", "users.read", "tweet.write", "offline.access", "dm.read", "dm.write"]
 
