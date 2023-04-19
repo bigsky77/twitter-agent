@@ -5,14 +5,8 @@ from dotenv import load_dotenv
 #from langchain.requests import RequestsWrapper
 #from langchain.llms.openai import OpenAI
 #from langchain.agents.agent_toolkits.openapi import planner
-from flask import Flask, request, redirect, session
 
 load_dotenv()
-
-# Flask app setup
-app = Flask(__name__)
-app.secret_key = os.urandom(50)
-
 
 # Get the Twitter API keys from the environment
 twitter = main.make_token()
@@ -56,5 +50,3 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 #
 #twitter_agent.run(user_query)
 
-if __name__ == "__main__":
-    app.run()
