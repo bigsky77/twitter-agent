@@ -1,10 +1,10 @@
 import os, yaml, json
 import main
 from dotenv import load_dotenv
-from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
+#from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.requests import RequestsWrapper
 from langchain.llms.openai import OpenAI
-from langchain.agents.agent_toolkits.openapi import planner
+#from langchain.agents.agent_toolkits.openapi import planner
 from flask import Flask, request, redirect, session
 
 load_dotenv()
@@ -39,22 +39,22 @@ main.r.set("token", j_refreshed_token)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-with open("./twitter_openapi.yaml") as f:
-    raw_twitter_api_spec = yaml.load(f, Loader=yaml.Loader)
-twitter_api_spec = reduce_openapi_spec(raw_twitter_api_spec)
-
-headers = {
-    "Authorization": "Bearer {}".format(refreshed_token["access_token"]),
-    "Content-Type": "application/json",
-}
-requests_wrapper = RequestsWrapper(headers=headers)
-
-llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.45)
-twitter_agent = planner.create_openapi_agent(twitter_api_spec, requests_wrapper, llm)
-
-user_query = "Send a message to user @BigSky_7 wishing them an awesome day!"
-
-twitter_agent.run(user_query)
+#with open("./twitter_openapi.yaml") as f:
+#    raw_twitter_api_spec = yaml.load(f, Loader=yaml.Loader)
+#twitter_api_spec = reduce_openapi_spec(raw_twitter_api_spec)
+#
+#headers = {
+#    "Authorization": "Bearer {}".format(refreshed_token["access_token"]),
+#    "Content-Type": "application/json",
+#}
+#requests_wrapper = RequestsWrapper(headers=headers)
+#
+#llm = OpenAI(model_name="gpt-3.5-turbo", temperature=0.45)
+#twitter_agent = planner.create_openapi_agent(twitter_api_spec, requests_wrapper, llm)
+#
+#user_query = "Send a message to user @BigSky_7 wishing them an awesome day!"
+#
+#twitter_agent.run(user_query)
 
 if __name__ == "__main__":
     app.run()
