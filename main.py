@@ -26,7 +26,14 @@ token_url = "https://api.twitter.com/2/oauth2/token"
 redirect_uri = os.getenv("REDIRECT_URI", "")
 
 # set scope
-scope = ["tweet.read", "users.read", "tweet.write", "offline.access", "dm.read", "dm.write"]
+scope = [
+    "tweet.read",
+    "users.read",
+    "tweet.write",
+    "offline.access",
+    "dm.read",
+    "dm.write",
+]
 
 # generate code verifier
 code_verifier = base64.urlsafe_b64encode(os.urandom(30)).decode("utf-8")
@@ -105,8 +112,8 @@ def callback():
     r.set("token", j_token)
     tweets = "placeholder"
     return tweets
-    #response = post_tweet_thread(tweets, token)
-    #return response
+    # response = post_tweet_thread(tweets, token)
+    # return response
 
 
 if __name__ == "__main__":

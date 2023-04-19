@@ -5,9 +5,14 @@ from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
 from langchain.requests import RequestsWrapper
 from langchain.llms.openai import OpenAI
 from langchain.agents.agent_toolkits.openapi import planner
-from langchain.chat_models import ChatOpenAI
+from flask import Flask, request, redirect, session
 
 load_dotenv()
+
+# Flask app setup
+app = Flask(__name__)
+app.secret_key = os.urandom(50)
+
 
 # Get the Twitter API keys from the environment
 twitter = main.make_token()
@@ -50,3 +55,6 @@ twitter_agent = planner.create_openapi_agent(twitter_api_spec, requests_wrapper,
 user_query = "Send a message to user @BigSky_7 wishing them an awesome day!"
 
 twitter_agent.run(user_query)
+
+if __name__ == "__main__":
+    app.run()
