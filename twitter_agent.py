@@ -33,6 +33,12 @@ main.r.set("token", j_refreshed_token)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
+payload = {
+            "text": "HUNGRY ROBOT MUST EAT!!!",
+        }
+
+main.post_tweet(payload, refreshed_token)
+
 #with open("./twitter_openapi.yaml") as f:
 #    raw_twitter_api_spec = yaml.load(f, Loader=yaml.Loader)
 #twitter_api_spec = reduce_openapi_spec(raw_twitter_api_spec)
