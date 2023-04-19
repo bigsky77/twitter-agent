@@ -2,11 +2,7 @@ import tweepy
 import os
 from dotenv import load_dotenv
 import yaml
-from langchain.llms.openai import OpenAI
-from langchain.requests import RequestsWrapper
-from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
-from langchain.tools import BaseTool
-from langchain.agents import AgentType, Tool, initialize_agent, tool
+from langchain.agents import AgentType, Tool, initialize_agent
 from langchain.chat_models import ChatOpenAI
 
 load_dotenv()
