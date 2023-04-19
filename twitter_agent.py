@@ -1,5 +1,4 @@
 import os, yaml, json
-import tiktoken
 import main
 from dotenv import load_dotenv
 from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
