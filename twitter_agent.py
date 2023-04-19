@@ -2,10 +2,12 @@ import os, yaml, json
 import main
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
-#from langchain.agents.agent_toolkits.openapi.spec import reduce_openapi_spec
-#from langchain.requests import RequestsWrapper
-#from langchain.llms.openai import OpenAI
-#from langchain.agents.agent_toolkits.openapi import planner
+from flask import Flask, request, redirect, session
+
+# Flask app setup
+app = Flask(__name__)
+app.secret_key = os.urandom(50)
+
 
 load_dotenv()
 
@@ -59,3 +61,5 @@ main.post_tweet(payload, refreshed_token)
 #
 #twitter_agent.run(user_query)
 
+if __name__ == "__main__":
+    app.run()
