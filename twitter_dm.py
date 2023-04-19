@@ -54,5 +54,5 @@ agent = initialize_agent(
 )
 
 result = agent.run(
-   "send BigSky a message saying hello",
+   "write a tweet about how you are about to workout!  Strong robots good robots!"
 )
