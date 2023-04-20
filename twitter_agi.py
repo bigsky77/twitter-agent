@@ -12,7 +12,6 @@ from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSerperAPIWrapper
 import random
 import twitter_actions
-import twitter_agent
 import faiss
 
 load_dotenv()
@@ -36,7 +35,6 @@ todo_prompt = PromptTemplate.from_template(
     "You are a planner who is an expert at coming up with a todo list for a given objective. Come up with a todo list for this objective: {objective} The todo list must not be longer than four tasks and must end with the Objective being completed."
 )
 todo_chain = LLMChain(llm=OpenAI(temperature=0), prompt=todo_prompt)
-twitter_agent = twitter_agent.TwitterAgent(token=token)
 search = GoogleSerperAPIWrapper()
 tools = [
     Tool(
