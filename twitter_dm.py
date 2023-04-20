@@ -28,26 +28,3 @@ def send_dm(message):
 
 def post_tweet(message):
    api.update_status(message)
-
-
-tools = [
-   Tool(
-       name="Send DM",
-       func=send_dm,
-       description="Useful for when you need to send a direct message. The input should be a string of the message you want to send.",
-   ),
-   Tool(
-       name="Post Tweet",
-       func=post_tweet,
-       description="Useful for when you need to post a Tweet.  The input should be a string of the Tweet you want to post.",
-   ),
-]
-
-llm = ChatOpenAI(temperature=0.5)
-agent = initialize_agent(
-   tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
-)
-
-result = agent.run(
-   "write a tweet about how twitter is like the mempool for artifical intelligence",
-)

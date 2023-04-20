@@ -12,3 +12,8 @@ redis
 numpy
 pandas
 gdown
+faiss-cpu
+google-search-results
+random
+typing
+collections
