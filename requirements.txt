@@ -15,4 +15,3 @@ gdown
 faiss-cpu
 google-search-results
 typing
-collections
