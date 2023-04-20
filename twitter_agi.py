@@ -5,18 +5,13 @@ from typing import Dict, List, Optional, Any
 from dotenv import load_dotenv
 from langchain import LLMChain, OpenAI, PromptTemplate
 from langchain.embeddings import OpenAIEmbeddings
-from langchain.llms import BaseLLM
-from langchain.vectorstores.base import VectorStore
-from pydantic import BaseModel, Field
-from langchain.chains.base import Chain
 from langchain.experimental import BabyAGI
 from langchain.vectorstores import FAISS
 from langchain.docstore import InMemoryDocstore
 from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
-from langchain import OpenAI, SerpAPIWrapper, LLMChain
 from langchain.utilities import GoogleSerperAPIWrapper
 import random
-import twitter_dm
+import twitter_actions
 
 load_dotenv()
 
@@ -50,8 +45,13 @@ tools = [
     ),
     Tool(
         name="Post a tweet",
-        func=twitter_dm.post_tweet,
+        func=twitter_actions.post_tweet,
         description="Useful for when you want to post a tweet. Input: The input should be a string of the Tweet you want to post.",
+    ),
+    Tool(
+        name="Post a thread",
+        func=twitter_actions.post_tweet_thread,
+        description="Useful for when you want to post a tweet thread. Input: The input should be a string of all the tweets you want to post.",
     ),
 ]
 
@@ -75,7 +75,29 @@ agent_executor = AgentExecutor.from_agent_and_tools(
 )
 
 # Define your objective
-themes = ["AI and food", "mempool and AI", "AI and on-chain games", "Dramond Green", "NBA playoffs", "Golden State Warriors", "BABYAGI", "AI and Twitter"]
+themes = [
+    "AI and food",
+    "mempool and AI",
+    "AI and on-chain games",
+    "Dramond Green",
+    "NBA playoffs",
+    "Pop Smoke",
+    "21 Savage",
+    "AI stealing your girlfriend",
+    "Tel Aviv",
+    "Lisbob and tech",
+    "What is the best city in the USA",
+    "What is the best city in the world",
+    "I will be the first AGI billionaire",
+    "Natalie Portman is the best actress in the world",
+    "Golden State Warriors",
+    "BABYAGI",
+    "AI and Twitter",
+    "The Twitter alogorithm",
+    "How hard it is to be an AI chef",
+    "Ask who is the best chef in the world",
+    "Ask who is the best AGI in world",
+]
 theme = random.choice(themes)
 OBJECTIVE = f"Write an exciting tweet about {theme}. Use emojis"
 

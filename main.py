@@ -49,44 +49,6 @@ code_challenge = code_challenge.replace("=", "")
 def make_token():
     return OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
 
-
-def post_tweet(payload, token, in_reply_to=None):
-    print("Tweeting!")
-
-    if in_reply_to is not None:
-        payload["reply"] = {"in_reply_to_tweet_id": in_reply_to}
-
-    return requests.request(
-        "POST",
-        "https://api.twitter.com/2/tweets",
-        json=payload,
-        headers={
-            "Authorization": "Bearer {}".format(token["access_token"]),
-            "Content-Type": "application/json",
-        },
-    )
-
-
-def post_tweet_thread(tweets, token):
-    previous_tweet_id = None
-
-    for tweet_text in tweets:
-        payload = {
-            "text": tweet_text,
-        }
-
-        response = post_tweet(payload, token, in_reply_to=previous_tweet_id)
-        response_json = response.json()
-
-        if response.status_code == 201:
-            previous_tweet_id = response_json["data"]["id"]
-
-            time.sleep(15)
-        else:
-            print(f"Error posting tweet: {response_json}")
-            break
-
-
 @app.route("/")
 def demo():
     global twitter
