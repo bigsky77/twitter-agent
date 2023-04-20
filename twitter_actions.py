@@ -31,8 +31,12 @@ main.r.set("token", j_refreshed_token)
 def fetch_token():
    return refreshed_token
 
-def post_tweet(payload):
+def post_tweet(tweet_text):
     print("Tweeting!")
+
+    payload = {
+            "text": tweet_text,
+        }
 
     return requests.request(
         "POST",
