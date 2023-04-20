@@ -1,6 +1,7 @@
 import os, yaml, json
 import main
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -27,7 +28,6 @@ st_refreshed_token = '"{}"'.format(refreshed_token)
 j_refreshed_token = json.loads(st_refreshed_token)
 main.r.set("token", j_refreshed_token)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 def post_tweet(payload, in_reply_to=None):
     print("Tweeting!")
