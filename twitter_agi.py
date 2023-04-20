@@ -52,11 +52,6 @@ tools = [
         func=twitter_actions.post_tweet,
         description="Useful when you want to post a tweet.  Takes a string of the tweet you want to post as input.",
     ),
-    Tool(
-        name="Post a thread",
-        func=twitter_actions.post_tweet_thread,
-        description="Useful for when you want to post a tweet thread. Input: The input should be a string of all the tweets you want to post.",
-    ),
 ]
 
 
