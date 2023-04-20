@@ -12,25 +12,31 @@ from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSerperAPIWrapper
 import random
 import twitter_actions
+import twitter_agent
+import faiss
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 SERPER_API_KEY = os.getenv("SERPER_API_KEY", "")
+token = twitter_actions.fetch_token()
 
 # Define your embedding model
 embeddings_model = OpenAIEmbeddings()
-# Initialize the vectorstore as empty
-import faiss
 
+# Initialize the vectorstore as empty
+#
 embedding_size = 1536
 index = faiss.IndexFlatL2(embedding_size)
 vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
+
+
 
 todo_prompt = PromptTemplate.from_template(
     "You are a planner who is an expert at coming up with a todo list for a given objective. Come up with a todo list for this objective: {objective} The todo list must not be longer than four tasks and must end with the Objective being completed."
 )
 todo_chain = LLMChain(llm=OpenAI(temperature=0), prompt=todo_prompt)
+twitter_agent = twitter_agent.TwitterAgent(token=token)
 search = GoogleSerperAPIWrapper()
 tools = [
     Tool(
@@ -44,9 +50,9 @@ tools = [
         description="useful for when you need to come up with todo lists. Input: an objective to create a todo list for. Output: a todo list for that objective. Please be very clear what the objective is!",
     ),
     Tool(
-        name="Post a tweet",
+        name="Twitter",
         func=twitter_actions.post_tweet,
-        description="Useful for when you want to post a tweet. Input: The input should be a string of the Tweet you want to post.",
+        description="Useful when you want to post a tweet.  Takes a string of the tweet you want to post as input.",
     ),
     Tool(
         name="Post a thread",

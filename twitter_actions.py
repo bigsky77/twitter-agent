@@ -28,12 +28,11 @@ st_refreshed_token = '"{}"'.format(refreshed_token)
 j_refreshed_token = json.loads(st_refreshed_token)
 main.r.set("token", j_refreshed_token)
 
+def fetch_token():
+   return refreshed_token
 
-def post_tweet(payload, in_reply_to=None):
+def post_tweet(payload):
     print("Tweeting!")
-
-    if in_reply_to is not None:
-        payload["reply"] = {"in_reply_to_tweet_id": in_reply_to}
 
     return requests.request(
         "POST",
