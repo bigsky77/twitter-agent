@@ -1,5 +1,6 @@
 import os
 import tweepy
+import random
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
@@ -76,7 +77,43 @@ def reply_to_mentions():
             )
             api.create_favorite(mention.id)  # Mark the tweet as "favorited"
 
+def follow_back_followers(min_follower_count, max_follower_count, follow_probability):
+    for follower in tweepy.Cursor(api.followers).items():
+        if not follower.following and min_follower_count <= follower.followers_count <= max_follower_count:
+            if random.random() <= follow_probability:
+                try:
+                    print(f"Following {follower.screen_name}")
+                    follower.follow()
+                except tweepy.TweepError as e:
+                    print(f"Error following {follower.screen_name}: {e}")
+                    break
+
+def is_relevant(tweet, keywords):
+    return any(keyword.lower() in tweet.text.lower() for keyword in keywords)
+
+# Define a function to like tweets from the timeline with a given probability
+def like_timeline_tweets(relevant_like_probability, irrelevant_like_probability, num_tweets, keywords):
+    for tweet in tweepy.Cursor(api.home_timeline).items(num_tweets):
+        if not tweet.favorited:
+            like_probability = relevant_like_probability if is_relevant(tweet, keywords) else irrelevant_like_probability
+            if random.random() <= like_probability:
+                try:
+                    print(f"Liking tweet from {tweet.user.screen_name}: {tweet.text}")
+                    api.create_favorite(tweet.id)
+                except tweepy.TweepError as e:
+                    print(f"Error liking tweet from {tweet.user.screen_name}: {e}")
 
 if __name__ == "__main__":
+    min_follower_count = 50
+    max_follower_count = 5000
+    follow_probability = 0.8  # Set the follow-back probability (0.8 = 80% chance)
+    follow_back_followers(min_follower_count, max_follower_count, follow_probability)
+
+    relevant_like_probability = 0.65  # Set the like probability for relevant tweets (0.65 = 65% chance)
+    irrelevant_like_probability = 0.35  # Set the like probability for irrelevant tweets (0.35 = 35% chance)
+    num_tweets = 20
+    keywords = ["AGI", "Langchain", "BabyAgi", "Python", "Paradigm", "Ethereum", "Warriors", "NBA", "Coding", "DeFi"]  # Set your relevant keywords here
+    like_timeline_tweets(relevant_like_probability, irrelevant_like_probability, num_tweets, keywords)
+
     reply_to_replies()
     reply_to_mentions()
