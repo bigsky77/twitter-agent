@@ -35,8 +35,9 @@ def get_last_dm_sent_to(user_id):
             return dm
     return None
 
+
 def reply_to_new_direct_messages():
-    received_dms = api.get_direct_messages()
+    received_dms = api.get_direct_messages(count=10)
     for dm in received_dms:
         sender_id = dm.message_create["sender_id"]
         if sender_id != api.me().id:  # Make sure it's not a message sent by yourself
@@ -45,8 +46,9 @@ def reply_to_new_direct_messages():
                 try:
                     print(f"Replying to DM from {sender_id}")
                     input_text = dm.message_create['message_data']['text']
-                    reply_text = chain.generate(input_text=input_text)
-                    api.send_direct_message(sender_id, reply_text)
+                    if random.random() < 0.8:  # Randomly decide to reply or not
+                        reply_text = chain.generate(input_text=input_text)
+                        api.send_direct_message(sender_id, reply_text)
                 except tweepy.TweepError as e:
                     print(f"Error replying to DM from {sender_id}: {e}")
 

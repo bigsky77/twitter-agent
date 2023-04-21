@@ -103,6 +103,32 @@ def like_timeline_tweets(relevant_like_probability, irrelevant_like_probability,
                 except tweepy.TweepError as e:
                     print(f"Error liking tweet from {tweet.user.screen_name}: {e}")
 
+def retweet_timeline_tweets():
+    # Retweet probability (5%)
+    RETWEET_PROBABILITY = 0.05
+    # Scaling factor for retweet probability of tweets from followers
+    FOLLOWER_FACTOR = 2
+
+    # Get the user's timeline
+    timeline = api.home_timeline()
+
+    # Get the list of user IDs who follow the authenticated user
+    follower_ids = api.followers_ids()
+
+    # Retweet random tweets with 5% probability, with higher probability for tweets from followers
+    for tweet in timeline:
+        if not tweet.retweeted and not tweet.favorited:
+            probability = RETWEET_PROBABILITY
+            if tweet.user.id in follower_ids:
+                probability *= FOLLOWER_FACTOR
+            if random.random() < probability:
+                try:
+                    api.retweet(tweet.id)
+                    print(f"Retweeted: {tweet.text}")
+                except tweepy.TweepError as e:
+                    print(f"Error retweeting: {e}")
+
+
 if __name__ == "__main__":
     min_follower_count = 50
     max_follower_count = 5000
