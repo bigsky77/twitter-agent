@@ -2,7 +2,17 @@
 
 This Python script is an example of an autonomous AI-powered agent for interacting with the Twitter API. The system uses OpenAI and LangChain to tweet, send direct messages, and reply to mentions. Unlike a traditional Twitter Bot, this agent is designed to dynamically interact with the environment.
 
-## How to Use
+## Capabilities
+
+ The Twitter-Agent currently has the following capabilities: 
+
+    Retweet: ✅ 
+    Tweet: ✅ 🤖
+    Reply to mentions: ✅ 🤖
+    Reply to replies: ✅ 🤖
+    Reply to direct messages: ✅ 🤖
+    Like tweets: ✅ 
+    Follow users: ✅ 
 
 To use the script, you will need to follow these steps:
 
