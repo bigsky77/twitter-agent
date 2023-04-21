@@ -47,17 +47,24 @@ def reply_to_replies():
             api.search_tweets, q=query, tweet_mode="extended"
         ).items()
 
+        # Keep track of replied tweets using a set
+        replied_tweet_ids = set()
+
         for reply in replies:
             if reply.in_reply_to_status_id == tweet.id:
-                user_reply_text = reply.full_text.replace(
-                    f"@{tweet.user.screen_name}", ""
-                ).strip()
-                response_text = generate_response(user_reply_text)
-                api.update_status(
-                    status=f"@{reply.user.screen_name} {response_text}",
-                    in_reply_to_status_id=reply.id,
-                    auto_populate_reply_metadata=True,
-                )
+                # Check if the tweet has already been replied to
+                if reply.id not in replied_tweet_ids:
+                    user_reply_text = reply.full_text.replace(
+                        f"@{tweet.user.screen_name}", ""
+                    ).strip()
+                    response_text = generate_response(user_reply_text)
+                    api.update_status(
+                        status=f"@{reply.user.screen_name} {response_text}",
+                        in_reply_to_status_id=reply.id,
+                        auto_populate_reply_metadata=True,
+                    )
+                    # Add the replied tweet ID to the set
+                    replied_tweet_ids.add(reply.id)
 
 def reply_to_mentions():
     mentions = api.mentions_timeline(tweet_mode='extended')
