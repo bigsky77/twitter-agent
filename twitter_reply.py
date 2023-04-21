@@ -58,7 +58,25 @@ def reply_to_replies():
                     auto_populate_reply_metadata=True,
                 )
 
+def reply_to_mentions():
+    mentions = api.mentions_timeline(tweet_mode='extended')
+
+    for mention in mentions:
+        # Check if the tweet has already been replied to
+        if not mention.favorited:
+            print(f'Replying to {mention.user.screen_name}...')
+            user_mention_text = mention.full_text.replace(
+                f"@{mention.user.screen_name}", ""
+            ).strip()
+            response_text = generate_response(user_mention_text)
+            api.update_status(
+                status=f"@{mention.user.screen_name} {response_text}",
+                in_reply_to_status_id=mention.id,
+                auto_populate_reply_metadata=True,
+            )
+            api.create_favorite(mention.id)  # Mark the tweet as "favorited"
 
 
 if __name__ == "__main__":
     reply_to_replies()
+    reply_to_mentions()
