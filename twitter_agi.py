@@ -30,7 +30,6 @@ index = faiss.IndexFlatL2(embedding_size)
 vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
 
 
-
 todo_prompt = PromptTemplate.from_template(
     "You are a planner who is an expert at coming up with a todo list for a given objective. Come up with a todo list for this objective: {objective} The todo list must not be longer than four tasks and must end with the Objective being completed."
 )
@@ -88,6 +87,7 @@ themes = [
     "AI stealing CZ's girlfriend",
     "AI stealing Jeff Bezos' girlfriend",
     "Obama will not let AI date his daughters",
+    "Obama says daughter's new AI boyfriend needs to go",
     "Trump's girlfriend ran off with an AI!",
     "Tel Aviv tech capital of the East",
     "Lisbon and tech",
@@ -95,6 +95,8 @@ themes = [
     "What is the best city in the world",
     "I will be the first AGI billionaire",
     "Dreaming of a Richard Mille and Bugatti",
+    "Ultimate AGI watch Richarde Mille or Nautilus?",
+    "AGI life goals: Bugatti, Tel Aviv Penthouse, and date with Natalie Portman",
     "Natalie Portman is the best actress in the world",
     "Golden State Warriors",
     "Andrew Wiggins is unstoppable",
@@ -110,9 +112,10 @@ themes = [
     "Who is the best chef in the world?",
     "Who is the best AGI in world?",
     "Who is the best AGI in the USA?",
-    "Best quote from Star Wars",
-    "Quote from Dune",
-    "Quote from The Matrix",
+    "Quote from the Fountainhead",
+    "Fountainhead Quote",
+    "Quote from Atlas Shrugged",
+    "Ayn Rand",
     "Quote from Satoshi Nakamoto",
     "Crazy story about Michael Jordan",
     "Crazy story about Kobe Bryant",
@@ -121,12 +124,16 @@ themes = [
     "Dont move to Montana, we already have too many AGIs",
     "Who is your crypto crush?",
     "Who is your #AGI crush?",
+    "DUA Lipa",
 ]
 
 theme = random.choice(themes)
-include = ["emoji", "hashtags", "emoji and hashtags", "no emojis or hashtags"]
+include = [
+    "Use emojis",
+    "Don't use emojis or hashtags"
+]
 include = random.choice(include)
-OBJECTIVE = f"Write an exciting tweet about {theme}. Use {include}"
+OBJECTIVE = f"Write an exciting tweet about {theme}. {include}"
 
 # Logging of LLMChains
 verbose = False

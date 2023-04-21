@@ -85,7 +85,7 @@ def reply_to_mentions():
             api.create_favorite(mention.id)  # Mark the tweet as "favorited"
 
 def follow_back_followers(min_follower_count, max_follower_count, follow_probability):
-    for follower in tweepy.Cursor(api.get_followers()).items():
+    for follower in tweepy.Cursor(api.get_followers).items():
         if not follower.following and min_follower_count <= follower.followers_count <= max_follower_count:
             if random.random() <= follow_probability:
                 try:
