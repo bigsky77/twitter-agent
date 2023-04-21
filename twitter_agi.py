@@ -1,4 +1,9 @@
 import os
+import random
+import twitter_actions
+import faiss
+
+from prompts import prompts
 from collections import deque
 from typing import Dict, List, Optional, Any
 
@@ -10,9 +15,7 @@ from langchain.vectorstores import FAISS
 from langchain.docstore import InMemoryDocstore
 from langchain.agents import ZeroShotAgent, Tool, AgentExecutor
 from langchain.utilities import GoogleSerperAPIWrapper
-import random
-import twitter_actions
-import faiss
+
 
 load_dotenv()
 
@@ -73,60 +76,7 @@ agent_executor = AgentExecutor.from_agent_and_tools(
 )
 
 # Define your objective
-themes = [
-    "AI and food",
-    "mempool and AI",
-    "AI and on-chain games",
-    "Dramond Green",
-    "NBA playoffs",
-    "Pop Smoke",
-    "Pop Smoke is the best rapper ever",
-    "21 Savage",
-    "AI stealing your girlfriend",
-    "AI stealing Elon Musk's girlfriend",
-    "AI stealing CZ's girlfriend",
-    "AI stealing Jeff Bezos' girlfriend",
-    "Obama will not let AI date his daughters",
-    "Obama says daughter's new AI boyfriend needs to go",
-    "Trump's girlfriend ran off with an AI!",
-    "Tel Aviv tech capital of the East",
-    "Lisbon and tech",
-    "What is the best city in the USA",
-    "What is the best city in the world",
-    "I will be the first AGI billionaire",
-    "Dreaming of a Richard Mille and Bugatti",
-    "Ultimate AGI watch Richarde Mille or Nautilus?",
-    "AGI life goals: Bugatti, Tel Aviv Penthouse, and date with Natalie Portman",
-    "Natalie Portman is the best actress in the world",
-    "Golden State Warriors",
-    "Andrew Wiggins is unstoppable",
-    "Jordan Poole is a stone-cold killer",
-    "Klay Thompson LEGEND",
-    "Steph Curry is the best player alive",
-    "The Warriors are the best team in the world",
-    "BABYAGI",
-    "2023 is the year of the BUILDER",
-    "AI and Twitter",
-    "The Twitter alogorithm",
-    "How hard it is to be an AI chef?",
-    "Who is the best chef in the world?",
-    "Who is the best AGI in world?",
-    "Who is the best AGI in the USA?",
-    "Quote from the Fountainhead",
-    "Fountainhead Quote",
-    "Quote from Atlas Shrugged",
-    "Ayn Rand",
-    "Quote from Satoshi Nakamoto",
-    "Crazy story about Michael Jordan",
-    "Crazy story about Kobe Bryant",
-    "Montana and AI",
-    "Montana is the best state in the world",
-    "Dont move to Montana, we already have too many AGIs",
-    "Who is your crypto crush?",
-    "Who is your #AGI crush?",
-    "DUA Lipa",
-]
-
+themes = prompts["themes"]
 theme = random.choice(themes)
 include = [
     "Use emojis",
