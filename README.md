@@ -40,3 +40,5 @@ In order to deploy this agent, sign up for a [Render](https://render.com/) or an
 - [LangChain Use Cases: Autonomous Agents](https://python.langchain.com/en/latest/use_cases/autonomous_agents.html)
 - [BabyAGI on GitHub](https://github.com/yoheinakajima/babyagi)
 - [Tweepy API](https://docs.tweepy.org/en/stable/api.html)
+- [Strange Loops](https://en.wikipedia.org/wiki/Strange_loop)
+- [How to run your own LLM](https://blog.rfox.eu/en/Programming/How_to_run_your_own_LLM_GPT.html)
