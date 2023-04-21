@@ -142,8 +142,8 @@ if __name__ == "__main__":
     follow_probability = 0.8  # Set the follow-back probability (0.8 = 80% chance)
     follow_back_followers(min_follower_count, max_follower_count, follow_probability)
 
-    relevant_like_probability = 0.65  # Set the like probability for relevant tweets (0.65 = 65% chance)
-    irrelevant_like_probability = 0.35  # Set the like probability for irrelevant tweets (0.35 = 35% chance)
+    relevant_like_probability = 0.35  # Set the like probability for relevant tweets (0.65 = 65% chance)
+    irrelevant_like_probability = 0.15  # Set the like probability for irrelevant tweets (0.35 = 35% chance)
     num_tweets = 20
     keywords = ["AGI", "Langchain", "BabyAgi", "Python", "Paradigm", "Ethereum", "Warriors", "NBA", "Coding", "DeFi"]  # Set your relevant keywords here
     like_timeline_tweets(relevant_like_probability, irrelevant_like_probability, num_tweets, keywords)

@@ -42,3 +42,4 @@ In order to deploy this agent, sign up for a [Render](https://render.com/) or an
 - [Tweepy API](https://docs.tweepy.org/en/stable/api.html)
 - [Strange Loops](https://en.wikipedia.org/wiki/Strange_loop)
 - [How to run your own LLM](https://blog.rfox.eu/en/Programming/How_to_run_your_own_LLM_GPT.html)
+- [Generative Simulacra](https://arxiv.org/abs/2304.03442)
