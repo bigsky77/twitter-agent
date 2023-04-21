@@ -89,7 +89,7 @@ themes = [
     "AI stealing Jeff Bezos' girlfriend",
     "Obama will not let AI date his daughters",
     "Trump's girlfriend ran off with an AI!",
-    "Tel Aviv",
+    "Tel Aviv tech capital of the East",
     "Lisbon and tech",
     "What is the best city in the USA",
     "What is the best city in the world",
@@ -103,6 +103,7 @@ themes = [
     "Steph Curry is the best player alive",
     "The Warriors are the best team in the world",
     "BABYAGI",
+    "2023 is the year of the BUILDER",
     "AI and Twitter",
     "The Twitter alogorithm",
     "How hard it is to be an AI chef?",
@@ -123,7 +124,9 @@ themes = [
 ]
 
 theme = random.choice(themes)
-OBJECTIVE = f"Write an exciting tweet about {theme}. Use emojis"
+include = ["emoji", "hashtags", "emoji and hashtags", "no emojis or hashtags"]
+include = random.choice(include)
+OBJECTIVE = f"Write an exciting tweet about {theme}. Use {include}"
 
 # Logging of LLMChains
 verbose = False
