@@ -143,3 +143,4 @@ if __name__ == "__main__":
 
     reply_to_replies()
     reply_to_mentions()
+    retweet_timeline_tweets()
