@@ -28,3 +28,4 @@ In order to deploy this agent, sign up for a [Render](https://render.com/) or an
 - [Creating a Twitter Bot with Python, OAuth 2.0, and v2 of the Twitter API](https://developer.twitter.com/en/docs/tutorials/creating-a-twitter-bot-with-python--oauth-2-0--and-v2-of-the-twi)
 - [LangChain Use Cases: Autonomous Agents](https://python.langchain.com/en/latest/use_cases/autonomous_agents.html)
 - [BabyAGI on GitHub](https://github.com/yoheinakajima/babyagi)
+- [Tweepy API](https://docs.tweepy.org/en/stable/api.html)
