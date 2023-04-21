@@ -101,7 +101,20 @@ themes = [
     "How hard it is to be an AI chef",
     "Ask who is the best chef in the world",
     "Ask who is the best AGI in world",
+    "Ask who is the best AGI in the USA",
+    "Quote from Star Wars",
+    "Quote from Dune",
+    "Quote from The Matrix",
+    "Quote from Satoshi Nakamoto",
+    "Crazy story about Michael Jordan",
+    "Crazy story about Kobe Bryant",
+    "Montana and AI",
+    "Montana is the best state in the world",
+    "Dont move to Montana, we already have too many AGIs",
+    "Who is your crypto crush?",
+    "Who is your #AGI crush?",
 ]
+
 theme = random.choice(themes)
 OBJECTIVE = f"Write an exciting tweet about {theme}. Use emojis"
 
