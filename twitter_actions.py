@@ -28,42 +28,6 @@ st_refreshed_token = '"{}"'.format(refreshed_token)
 j_refreshed_token = json.loads(st_refreshed_token)
 main.r.set("token", j_refreshed_token)
 
-def fetch_token():
+def fetch_token_refreshed():
    return refreshed_token
 
-def post_tweet(tweet_text):
-    print("Tweeting!")
-
-    payload = {
-            "text": tweet_text,
-        }
-
-    return requests.request(
-        "POST",
-        "https://api.twitter.com/2/tweets",
-        json=payload,
-        headers={
-            "Authorization": "Bearer {}".format(refreshed_token["access_token"]),
-            "Content-Type": "application/json",
-        },
-    )
-
-
-def post_tweet_thread(tweets):
-    previous_tweet_id = None
-
-    for tweet_text in tweets:
-        payload = {
-            "text": tweet_text,
-        }
-
-        response = post_tweet(payload, refreshed_token, in_reply_to=previous_tweet_id)
-        response_json = response.json()
-
-        if response.status_code == 201:
-            previous_tweet_id = response_json["data"]["id"]
-
-            time.sleep(15)
-        else:
-            print(f"Error posting tweet: {response_json}")
-            break

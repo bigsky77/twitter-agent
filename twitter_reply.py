@@ -1,6 +1,7 @@
 import os
 import tweepy
 import random
+import main
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
@@ -10,16 +11,8 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-api_key = os.getenv("API_KEY", "")
-api_secret_key = os.getenv("API_SECRET_KEY", "")
-access_token = os.getenv("ACCESS_TOKEN", "")
-access_token_secret = os.getenv("ACCESS_TOKEN_SECRET", "")
+api = main.get_api()
 
-auth = tweepy.OAuth1UserHandler(
-    api_key, api_secret_key, access_token, access_token_secret
-)
-
-api = tweepy.API(auth)
 llm = OpenAI(temperature=0.9)
 
 prompt = PromptTemplate(
@@ -139,7 +132,7 @@ def retweet_timeline_tweets():
 if __name__ == "__main__":
     min_follower_count = 50
     max_follower_count = 5000
-    follow_probability = 0.8  # Set the follow-back probability (0.8 = 80% chance)
+    follow_probability = 0.05  # Set the follow-back probability (0.8 = 80% chance)
     follow_back_followers(min_follower_count, max_follower_count, follow_probability)
 
     relevant_like_probability = 0.35  # Set the like probability for relevant tweets (0.65 = 65% chance)

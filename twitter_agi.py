@@ -27,7 +27,6 @@ token = twitter_actions.fetch_token()
 embeddings_model = OpenAIEmbeddings()
 
 # Initialize the vectorstore as empty
-#
 embedding_size = 1536
 index = faiss.IndexFlatL2(embedding_size)
 vectorstore = FAISS(embeddings_model.embed_query, index, InMemoryDocstore({}), {})
@@ -39,25 +38,25 @@ todo_prompt = PromptTemplate.from_template(
 todo_chain = LLMChain(llm=OpenAI(temperature=0), prompt=todo_prompt)
 search = GoogleSerperAPIWrapper()
 tools = [
-    Tool(
-        name="Search",
-        func=search.run,
-        description="useful for when you need to answer questions about current events",
-    ),
+    #Tool(
+    #    name="Search",
+    #    func=search.run,
+    #    description="useful for when you need to answer questions about current events",
+    #),
     Tool(
         name="TODO",
         func=todo_chain.run,
         description="useful for when you need to come up with todo lists. Input: an objective to create a todo list for. Output: a todo list for that objective. Please be very clear what the objective is!",
     ),
-    Tool(
-        name="post tweet",
-        func=twitter_actions.post_tweet,
-        description="Useful when you want to post a tweet.  Takes a string of the tweet you want to post as input.  Only use when all other tasks have been compeleted ",
-    ),
+   # Tool(
+   #     name="post tweet",
+   #     func=twitter_actions.post_tweet,
+   #     description="Useful when you want to post a tweet.  Takes a string of the tweet you want to post as input.  Only use when all other tasks have been compeleted ",
+   # ),
 ]
 
 
-prefix = """You are an AI who performs one task based on the following objective: {objective}. Take into account these previously completed tasks: {context}."""
+prefix = """You are an AI who performs one task based on the following objective: {objective}. Take into account these previously completed tasks: {context}. Retrun the completed task as a string."""
 suffix = """Question: {task}
 {agent_scratchpad}"""
 prompt = ZeroShotAgent.create_prompt(
