@@ -16,3 +16,4 @@ faiss-cpu
 google-search-results
 typing
 tiktoken
+pytz

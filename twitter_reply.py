@@ -120,7 +120,7 @@ def retweet_timeline_tweets():
     timeline = api.home_timeline()
 
     # Get the list of user IDs who follow the authenticated user
-    follower_ids = api.get_followers_ids()
+    follower_ids = api.get_follower_ids()
 
     # Retweet random tweets with 5% probability, with higher probability for tweets from followers
     for tweet in timeline:
