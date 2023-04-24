@@ -17,3 +17,4 @@ google-search-results
 typing
 tiktoken
 pytz
+wikipedia

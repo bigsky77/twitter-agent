@@ -1,7 +1,7 @@
 import os
 import tweepy
 import random
-import main
+import auth
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
@@ -11,7 +11,7 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
-api = main.get_api()
+api = auth.get_api()
 
 llm = OpenAI(temperature=0.9)
 
@@ -32,6 +32,9 @@ def generate_response(input_text):
 def reply_to_replies():
     my_tweets = api.user_timeline(count=10)
 
+    # Keep track of replied tweets using a set
+    replied_tweet_ids = set()
+
     for tweet in my_tweets:
         print(tweet.user.screen_name, tweet.text)
         # Search for tweets that are a reply to your tweet and mention your screen name
@@ -39,9 +42,6 @@ def reply_to_replies():
         replies = tweepy.Cursor(
             api.search_tweets, q=query, tweet_mode="extended"
         ).items()
-
-        # Keep track of replied tweets using a set
-        replied_tweet_ids = set()
 
         for reply in replies:
             if reply.in_reply_to_status_id == tweet.id:
@@ -58,6 +58,7 @@ def reply_to_replies():
                     )
                     # Add the replied tweet ID to the set
                     replied_tweet_ids.add(reply.id)
+
 
 def reply_to_mentions():
     mentions = api.mentions_timeline(tweet_mode='extended')
