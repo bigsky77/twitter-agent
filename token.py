@@ -28,6 +28,6 @@ st_refreshed_token = '"{}"'.format(refreshed_token)
 j_refreshed_token = json.loads(st_refreshed_token)
 auth.r.set("token", j_refreshed_token)
 
-def fetch_token_refreshed():
+def fetch_token():
    return refreshed_token
 

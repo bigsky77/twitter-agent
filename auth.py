@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import tweepy
 import os
 import re
 import json
@@ -17,15 +16,6 @@ r = redis.from_url(os.getenv("REDIS_URL", ""))
 app = Flask(__name__)
 app.secret_key = os.urandom(50)
 
-# Twitter OAUTH1 credentials
-api_key = os.getenv("API_KEY", "")
-api_secret_key = os.getenv("API_SECRET_KEY", "")
-access_token = os.getenv("ACCESS_TOKEN", "")
-access_token_secret = os.getenv("ACCESS_TOKEN_SECRET", "")
-
-auth = tweepy.OAuth1UserHandler(
-    api_key, api_secret_key, access_token, access_token_secret
-)
 
 # Twitter OAUTH2 app credentials
 client_id = os.getenv("CLIENT_ID", "")
@@ -53,14 +43,11 @@ code_challenge = hashlib.sha256(code_verifier.encode("utf-8")).digest()
 code_challenge = base64.urlsafe_b64encode(code_challenge).decode("utf-8")
 code_challenge = code_challenge.replace("=", "")
 
-# generate tweepy api
-def make_api():
-    api = tweepy.API(auth)
-    return api
 
 # generate token
 def make_token():
     return OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
+
 
 @app.route("/")
 def demo():
