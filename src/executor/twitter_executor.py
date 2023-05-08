@@ -12,6 +12,4 @@ class TwitterExecutor:
         return self.client.get_user(user_id)
 
     def get_my_timeline(self, count):
-        user_id = self.get_me().data
-        print(user_id)
-        return self.client.get_user_timeline(user_id, count)
+        return self.client.get_home_timeline(max_results=count)
