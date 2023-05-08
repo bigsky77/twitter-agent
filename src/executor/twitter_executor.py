@@ -97,3 +97,28 @@ class TwitterExecutor:
         reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
         response = reply_chain.run(input_text=tweet_text)
         return response
+
+    def quote_tweet(self):
+        REPLY_PROBABILITY = self.params["reply_probability"]
+        timeline = self.get_my_timeline(10)
+        for tweet in timeline.data:
+            tweet_id = tweet.id
+            tweet_text = tweet.text
+
+            probability = REPLY_PROBABILITY
+            if random.random() < probability:
+                try:
+                    response = self.generate_response(tweet_text)
+                    self.client.create_tweet(text=response, quote_tweet_id=tweet_id)
+                    print(f"Replied to: {tweet_text}")
+                except tweepy.TweepError as e:
+                    print(f"Error replying: {e}")
+
+    def generate_tweet(self, input_text):
+        tweet_prompt = PromptTemplate(
+            input_variables=["input_text"],
+            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Use emojis but no hashtags.",
+        )
+        tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
+        response = tweet_chain.run(input_text=input_text)
+        self.client.create_tweet(text=response)

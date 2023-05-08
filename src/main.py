@@ -17,6 +17,7 @@ def main():
    twitterClient = fetch_client()
    llm = OpenAI(temperature=0.5)
    executor = twitter_executor.TwitterExecutor(twitterClient, params, llm)
+   #executor.generate_tweet("devin booker")
    executor.reply_to_timeline()
 
 if __name__ == '__main__':
