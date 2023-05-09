@@ -3,6 +3,11 @@ import json
 import redis
 import tweepy
 from dotenv import load_dotenv
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Sequence, Union
+
+from langchain.docstore.document import Document
+from langchain.document_loaders.base import BaseLoader
+
 
 load_dotenv()
 
@@ -22,3 +27,4 @@ def fetch_client():
 
     # Initialize a Tweepy client instance
     return client
+

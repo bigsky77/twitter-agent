@@ -71,7 +71,7 @@ class TwitterExecutor:
     # Define a function to reply to tweets from the timeline with a given probability
     def reply_to_timeline(self):
         REPLY_PROBABILITY = self.params["reply_probability"]
-        timeline = self.get_my_timeline(100)
+        timeline = self.get_my_timeline(10)
 
         for tweet in timeline.data:
             tweet_id = tweet.id
