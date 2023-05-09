@@ -38,4 +38,4 @@ class TwitterCollector:
 
     # retrieve last uploaded timeline
     def load_timeline(self):
-        return self.db.search("tweet_id")
+        return self.db.search("current:true")

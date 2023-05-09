@@ -27,3 +27,8 @@ should_respond_probability: 0.85
 gif_respond_probability: 0.25
 text_respond_probability: 0.25
 reply_probability: 0.25
+
+response_probability: 0.1
+like_probability: 0.3
+retweet_probability: 0.1
+action_threshold: 0.8

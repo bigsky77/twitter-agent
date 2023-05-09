@@ -19,6 +19,9 @@ class TwitterExecutor:
     def get_my_timeline(self, count):
         return self.client.get_home_timeline(max_results=count)
 
+    def execute_actions(actions):
+        pass
+
     # Define a function to like tweets from the timeline with a given probability
     def like_tweets(self, keywords, num_tweets=10):
         irrelevant_like_probability = self.params["irrelevant_like_probability"],
