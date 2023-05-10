@@ -1,14 +1,14 @@
 import tweepy
 import random
+import re
 from strategy.media import gif_reply
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from typing import Any, Dict, List
 
 class TwitterExecutor:
-    def __init__(self, client, params, llm):
+    def __init__(self, client, llm):
         self.client = client
-        self.params = params
         self.llm = llm
 
     def get_me(self):
@@ -23,9 +23,9 @@ class TwitterExecutor:
     def execute_actions(self, tweet_actions: List[Dict[str, Any]]):
         for tweet_action in tweet_actions:
             if tweet_action.metadata["action"] == "like_timeline_tweets":
-                self.client.like(action.id)
+                self.client.like(tweet_action.metadata["tweet_id"])
             elif tweet_action.metadata["action"] == "retweet_timeline_tweets":
-                self.client.retweet(tweet_id)
+                self.client.retweet(tweet_action.metadata["tweet_id"])
             elif tweet_action.metadata["action"] == "reply_to_timeline":
                 self.reply_to_timeline(tweet_action.page_content, tweet_action.metadata["tweet_id"])
             elif tweet_action.metadata["action"] == "quote_tweet":
@@ -47,7 +47,7 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny.",
+            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Speak like Alex from a ClockWork Orange.",
         )
         reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
         response = reply_chain.run(input_text=tweet_text)
@@ -61,8 +61,13 @@ class TwitterExecutor:
     def generate_tweet(self, input_text):
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Use emojis but no hashtags.",
+            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Use emojis but no hashtags. Speak like Alex from A Clockwork Orange",
         )
         tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
         response = tweet_chain.run(input_text=input_text)
+
+        # Remove newlines and periods from the beginning and end of the tweet
+        response = re.sub(r'^[\n\.\"]*', '', response)
+        response = re.sub(r'[\n\.\"]*$', '', response)
+
         self.client.create_tweet(text=response)

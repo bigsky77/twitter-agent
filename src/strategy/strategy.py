@@ -25,11 +25,11 @@ class TwitterStrategy:
         ]
 
         probabilities = [
-            0.1,  # quote_tweet
-            0.2,  # reply_to_timeline
-            0.2,  # like_timeline_tweets
-            0.1,  # retweet_timeline_tweets
-            0.4,  # none
+            0.05,  # quote_tweet
+            0.10,  # reply_to_timeline
+            0.10,  # like_timeline_tweets
+            0.05,  # retweet_timeline_tweets
+            0.70,  # none
         ]
 
 
