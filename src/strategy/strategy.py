@@ -12,7 +12,7 @@ class TwitterStrategy:
     def analyze_tweets(self, timeline_tweets):
         return timeline_tweets
 
-    def weighted_random_choice(actions, probabilities):
+    def weighted_random_choice(self, actions, probabilities):
         return random.choices(actions, probabilities)[0]
 
     def select_action(self, tweets: List[Dict[str, Any]]):
@@ -32,20 +32,23 @@ class TwitterStrategy:
             0.4,  # none
         ]
 
+
+        results: List[Document] = []
         for tweet in tweets:
             # Select an action based on the probabilities
             action = self.weighted_random_choice(actions, probabilities)
-            self._update_tweet(tweet, action)
+            docs = self._update_tweet(tweet, action)
+            results.extend(docs)
 
-        return tweets
+        return results
 
     def _update_tweet(self, tweet: [Dict[str, Any]], action: str) -> Iterable[Document]:
         """Format tweets into a string."""
         metadata = {
-            "tweet_id": tweet.id,
+            "tweet_id": tweet.metadata["tweet_id"],
             "action": action,
         }
         yield Document(
-            page_content=tweet.text,
+            page_content=tweet.page_content,
             metadata=metadata,
         )

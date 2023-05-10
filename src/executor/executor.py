@@ -3,7 +3,7 @@ import random
 from strategy.media import gif_reply
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-
+from typing import Any, Dict, List
 
 class TwitterExecutor:
     def __init__(self, client, params, llm):
@@ -20,17 +20,17 @@ class TwitterExecutor:
     def get_my_timeline(self, count):
         return self.client.get_home_timeline(max_results=count)
 
-    def execute_actions(self, actions: List[Dict[str, Any]]):
-        for action in actions.data:
-            if action["action"] == "like_tweets":
+    def execute_actions(self, tweet_actions: List[Dict[str, Any]]):
+        for tweet_action in tweet_actions:
+            if tweet_action.metadata["action"] == "like_timeline_tweets":
                 self.client.like(action.id)
-            elif action["action"] == "retweet_timeline_tweets":
+            elif tweet_action.metadata["action"] == "retweet_timeline_tweets":
                 self.client.retweet(tweet_id)
-            elif action["action"] == "reply_to_timeline":
-                self.reply_to_timeline(action.text, action.id)
-            elif action["action"] == "quote_tweet":
-                self.quote_tweet(action.text, action.id)
-            elif action["action"] == "none":
+            elif tweet_action.metadata["action"] == "reply_to_timeline":
+                self.reply_to_timeline(tweet_action.page_content, tweet_action.metadata["tweet_id"])
+            elif tweet_action.metadata["action"] == "quote_tweet":
+                self.quote_tweet(tweet_action.page_content, tweet_action.metadata["tweet_id"])
+            elif tweet_action.metadata["action"] == "none":
                 pass
 
     # Define a function to reply to tweets from the timeline with a given probability
@@ -53,7 +53,7 @@ class TwitterExecutor:
         response = reply_chain.run(input_text=tweet_text)
         return response
 
-    def quote_tweet(self):
+    def quote_tweet(self, tweet_text, tweet_id):
         response = self.generate_response(tweet_text)
         self.client.create_tweet(text=response, quote_tweet_id=tweet_id)
         print(f"Replied to: {tweet_text}")
