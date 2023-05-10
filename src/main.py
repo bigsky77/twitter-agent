@@ -1,12 +1,10 @@
 import os
 import time
-import tweepy
 import yaml
-import requests
 import random
+import prompts
 
 from twitter_client import fetch_client
-from langchain.docstore import InMemoryDocstore
 from langchain.vectorstores import DeepLake
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
@@ -14,7 +12,6 @@ from langchain.llms import OpenAI
 from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
 from strategy.strategy import TwitterStrategy
-from strategy.prompts import prompts
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -33,7 +30,7 @@ def main():
     # spawn memory
     embeddings = OpenAIEmbeddings(disallowed_special=())
     db = DeepLake(
-        dataset_path="./data/", embedding_function=embeddings, read_only=False
+        dataset_path="./data/", embedding_function=embeddings, read_only=True
     )
 
     # spawn collector
@@ -48,24 +45,27 @@ def main():
     # run
     run(db, collector, strategy, executor)
 
+
 def run(db, collector, strategy, executor):
-    #while True:
-        # Step 1: Collect timeline tweets
-        timeline_tweets = collector.retrieve_timeline(10)
+    # while True:
+    # Step 1: Collect timeline tweets
+    timeline_tweets = collector.retrieve_timeline(10)
 
-        # Step 2: Pass timeline tweets to Strategy
-        actions = strategy.select_action(tweets=timeline_tweets)
+    # Step 2: Pass timeline tweets to Strategy
+    actions = strategy.select_action(tweets=timeline_tweets)
 
-        # Step 4: Pass actions to Executor
-        executor.execute_actions(tweet_actions=actions)
+    # Step 4: Pass actions to Executor
+    executor.execute_actions(tweet_actions=actions)
 
-        # Step 5: Generate a tweet
-        time.sleep(300)
-        themes = prompts["themes"]
-        tweet_theme = random.choice(themes)
-        executor.generate_tweet(tweet_theme)
+    # Step 5: Generate a tweet
+    time.sleep(300)
+    themes = prompts["themes"]
+    tweet_theme = random.choice(themes)
+    executor.generate_tweet(tweet_theme)
 
-        # Sleep for an hour (3600 seconds) before the next iteration
+    # Sleep for an hour (3600 seconds) before the next iteration
+    time.sleep(3600)
+
 
 if __name__ == "__main__":
     main()
