@@ -1,12 +1,7 @@
 import random
-import re
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from langchain.docstore.document import Document
+from typing import Any, Dict, Iterable, List
 
-strategy_prompt = PromptTemplate(
-    input_variables=["input_text", "action"],
-    template="You a decision agent.  Based on the: {input_text} and the {action} return a score between 0 and 1. The higher the score the more likely you are to take the action. Only return a score.  Your criteria is the following.  For like you should do this for generic tweets.  For reply you should do this engaging or provactive tweets that makes a statement",
-)
 
 class TwitterStrategy:
     def __init__(self, client, llm, params):
@@ -15,52 +10,42 @@ class TwitterStrategy:
         self.params = params
 
     def analyze_tweets(self, timeline_tweets):
-        strategy_chain = LLMChain(llm=self.llm, prompt=strategy_prompt)
-        actions = []
+        return timeline_tweets
 
-        for tweet_doc in timeline_tweets:
-            tweet_content = tweet_doc.page_content
-            tweet_id = tweet_doc.metadata['tweet_id']
+    def weighted_random_choice(actions, probabilities):
+        return random.choices(actions, probabilities)[0]
 
-            # Use LLM to generate a score for each action
-            response_score = strategy_chain.run(input_text=tweet_content, action="respond")
-            like_score = strategy_chain.run(input_text=tweet_content, action="like")
-            retweet_score = strategy_chain.run(input_text=tweet_content, action="retweet")
+    def select_action(self, tweets: List[Dict[str, Any]]):
+        actions = [
+            "quote_tweet",
+            "reply_to_timeline",
+            "like_timeline_tweets",
+            "retweet_timeline_tweets",
+            "none",
+        ]
 
-            # Determine which action to take based on the LLM scores and probabilities
-            action = self.choose_action(response_score, like_score, retweet_score)
+        probabilities = [
+            0.1,  # quote_tweet
+            0.2,  # reply_to_timeline
+            0.2,  # like_timeline_tweets
+            0.1,  # retweet_timeline_tweets
+            0.4,  # none
+        ]
 
-            if action:
-                actions.append((action, tweet_id))
+        for tweet in tweets:
+            # Select an action based on the probabilities
+            action = self.weighted_random_choice(actions, probabilities)
+            self._update_tweet(tweet, action)
 
-        return actions
+        return tweets
 
-    def choose_action(self, response_score, like_score, retweet_score):
-        action_probabilities = {
-            "respond": self.params["response_probability"],
-            "like": self.params["like_probability"],
-            "retweet": self.params["retweet_probability"]
+    def _update_tweet(self, tweet: [Dict[str, Any]], action: str) -> Iterable[Document]:
+        """Format tweets into a string."""
+        metadata = {
+            "tweet_id": tweet.id,
+            "action": action,
         }
-
-        # Normalize probabilities
-        total = sum(action_probabilities.values())
-        normalized_probabilities = {k: v / total for k, v in action_probabilities.items()}
-
-        action_scores = {
-            "respond": response_score,
-            "like": like_score,
-            "retweet": retweet_score
-        }
-
-        # Calculate weighted scores
-        weighted_scores = {k: v * action_scores[k] for k, v in normalized_probabilities.items()}
-
-        # Choose the action with the highest weighted score
-        chosen_action = max(weighted_scores, key=weighted_scores.get)
-
-        # Apply a random threshold to add some randomness to the chosen actions
-        if random.random() < self.params["action_threshold"]:
-            return chosen_action
-
-        return None
-
+        yield Document(
+            page_content=tweet.text,
+            metadata=metadata,
+        )
