@@ -2,7 +2,7 @@ import os
 import time
 import yaml
 import random
-from .. import prompts
+import prompts
 
 from twitter_client import fetch_client
 from langchain.vectorstores import DeepLake
