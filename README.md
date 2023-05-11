@@ -26,9 +26,7 @@ To use the script, you will need to follow these steps:
 
 ### Execution
 
-1. First, run `python main.py` to authenticate your Twitter account using OAUTH2.
-2. Once authenticated, run `python twitter_agi.py` to start the AGI.
-3. Write prompts.  `cp example_prompts.py prompts.py` and add prompts.
+Run `python src/main.py` once your .env is fully configured.
 
 ### Deployment
 
