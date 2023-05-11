@@ -47,7 +47,7 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Speak like Alex from a ClockWork Orange.",
+            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Write in the style of Hunter S. Thompson.",
         )
         reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
         response = reply_chain.run(input_text=tweet_text)
@@ -61,7 +61,7 @@ class TwitterExecutor:
     def generate_tweet(self, input_text):
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Use emojis but no hashtags. Speak like Alex from A Clockwork Orange",
+            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Use emojis but no hashtags. Write in the style of Hunter S. Thompson.",
         )
         tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
         response = tweet_chain.run(input_text=input_text)
