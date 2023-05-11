@@ -26,7 +26,7 @@ To use the script, you will need to follow these steps:
 
 ### Execution
 
-Run `python src/main.py` once your .env is fully configured.
+Run `python src/main.py` once your .env is fully configured.  Note, you will need to be a subscriber to the Twitter Basic API for the Agent to fully function.  If you are using the free tier, the agent will only be able to post Tweets and not interact with the timeline.   
 
 ### Deployment
 

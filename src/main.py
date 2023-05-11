@@ -58,7 +58,7 @@ def run(db, collector, strategy, executor):
     executor.execute_actions(tweet_actions=actions)
 
     # Step 5: Generate a tweet
-    time.sleep(300)
+    time.sleep(600)
     themes = prompts["themes"]
     tweet_theme = random.choice(themes)
     executor.generate_tweet(tweet_theme)
