@@ -1,12 +1,14 @@
+import yaml
 from typing import Any, Dict, Iterable, List
 from langchain.docstore.document import Document
 
 class TwitterCollector:
-    def __init__(self, client, USER_ID):
+    def __init__(self, client, USER_ID, params):
         self.client = client
         self.USER_ID = USER_ID
+        self.params = params
 
-    def get_tweet_info(self, tweet_id):
+    def get_tweet_info(self, tweet_id: int):
         return self.client.get_tweet(tweet_id)
 
     # convert to vector storable document
@@ -17,12 +19,27 @@ class TwitterCollector:
         results.extend(docs)
         return results
 
-    def retrieve_list(self, max_results, list_id) -> List[Document]:
+    def retrieve_list(self, max_results: int, list_id: int) -> List[Document]:
         results: List[Document] = []
         tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
         docs = self._format_tweets(tweets)
         results.extend(docs)
         return results
+
+    def retrieve_weighted_lists(self, max_results: int, list_ids: List[int]) -> List[Document]:
+        results: List[Document] = []
+        for list_id in list_ids:
+            tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
+            docs = self._format_tweets(tweets)
+            results.extend(docs)
+        print(results)
+        return results
+
+    def run(self):
+        documents = self.retrieve_weighted_lists(10, self.params['lists'])
+        contents = [doc.page_content for doc in documents]
+        single_string = "\n".join(contents)
+        print(single_string)
 
     def _format_tweets(
         self, tweets: List[Dict[str, Any]]
