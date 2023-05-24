@@ -34,7 +34,7 @@ def main():
     )
 
     # spawn collector
-    collector = TwitterCollector(twitterClient, USER_ID)
+    collector = TwitterCollector(twitterClient, USER_ID, params)
 
     # spawn strategy
     strategy = TwitterStrategy(client=twitterClient, llm=llm, params=params)

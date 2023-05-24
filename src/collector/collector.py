@@ -35,11 +35,12 @@ class TwitterCollector:
         print(results)
         return results
 
+    def retrieve_dms(self):
+        res = self.client.get_direct_message_events(max_results=10)
+        print(res)
+
     def run(self):
-        documents = self.retrieve_weighted_lists(10, self.params['lists'])
-        contents = [doc.page_content for doc in documents]
-        single_string = "\n".join(contents)
-        print(single_string)
+        pass
 
     def _format_tweets(
         self, tweets: List[Dict[str, Any]]
