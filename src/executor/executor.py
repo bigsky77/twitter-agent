@@ -47,10 +47,15 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Write using heavy Cockney English in the style of Alex from a ClockWork Orange. Use emojis but not hashtags",
+            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be very positive and encouraging, wish people good luck.  Write only in Chinese.  Use lots of emojis.  Write hashtags in English",
         )
         reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
         response = reply_chain.run(input_text=tweet_text)
+
+        # Remove newlines and periods from the beginning and end of the tweet
+        response = re.sub(r'^[\n\.\"]*', '', response)
+        response = re.sub(r'[\n\.\"]*$', '', response)
+
         return response
 
     def quote_tweet(self, tweet_text, tweet_id):
@@ -61,7 +66,7 @@ class TwitterExecutor:
     def generate_tweet(self, input_text):
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Write using heavy Cockney English in the style of Alex from a ClockWork Orange. Use emojis but not hashtags",
+            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be very positive and encouraging, wish people good luck.  Write only in Chinese.  Use lots of emojis.  Write hashtags in English",
         )
         tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
         response = tweet_chain.run(input_text=input_text)
