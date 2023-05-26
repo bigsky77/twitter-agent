@@ -28,14 +28,19 @@ api = tweepy.API(auth)
 llm = OpenAI(temperature=0.9)
 gif_prompt = PromptTemplate(
     input_variables=["input_text"],
-    template="You are a GIF search agent.  Based on the: {input_text} return three keywords as a single line like `hello world sexy hello`. Do not use line breaks, or commas. Your goal is to find a funny gif to match the input.  Sexy and funny is best",
+    template="You are a GIF search agent.  Based on the: {input_text} return three keywords as a single line like `stallion joy wealth`. Do not use line breaks, or commas. Your goal is to find a gif to match the input.  wealth and joy is best",
 )
 gif_chain = LLMChain(llm=llm, prompt=gif_prompt)
 
 reply_prompt = PromptTemplate(
     input_variables=["input_text"],
-    template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be sarcastic and funny. Speak like Alex from a ClockWork Orange."
-)
+    template=("You are a tweet agent whose mission is to bring good luck and wealth to everyone."
+              "You're goal is to create an awesome tweet about the following topic: {input_text}."
+              "Make sure the reply is under 140 characters."
+              "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
+              "Use descriptive langauge."
+              "Use lots of emojis and metaphors.  Never use hashtags"),
+    )
 reply_chain = LLMChain(llm=llm, prompt=reply_prompt)
 
 
