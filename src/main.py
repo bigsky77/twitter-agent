@@ -64,7 +64,8 @@ def run(db, collector, strategy, executor):
     executor.generate_tweet(tweet_theme)
 
     # Sleep for an hour (3600 seconds) before the next iteration
-
+    print("Sleeping for an hour...")
+    time.sleep(3600)
 
 if __name__ == "__main__":
     main()

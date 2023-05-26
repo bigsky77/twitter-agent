@@ -47,7 +47,12 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet reply agent.  You are replying to a tweet that says: {input_text}.  Make sure the reply is under 140 characters.  Be very positive and encouraging, wish people good luck.  Write only in Chinese.  Use lots of emojis.  Write hashtags in English",
+            template=("You are a tweet agent whose mission is to bring good luck and wealth to everyone."
+            "You're goal is to create an awesome tweet about the following topic: {input_text}."
+            "Make sure the reply is under 140 characters."
+            "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
+            "Use descriptive langauge."
+            "Use lots of emojis and metaphors.  Never use hashtags"),
         )
         reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
         response = reply_chain.run(input_text=tweet_text)
@@ -66,7 +71,12 @@ class TwitterExecutor:
     def generate_tweet(self, input_text):
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template="You are a tweet agent.  You're goal is to create an awesome tweet about the following topic: {input_text}.  Make sure the reply is under 140 characters.  Be very positive and encouraging, wish people good luck.  Write only in Chinese.  Use lots of emojis.  Write hashtags in English",
+            template=("You are a tweet agent whose mission is to bring good luck and wealth to everyone."
+            "You're goal is to create an awesome tweet about the following topic: {input_text}."
+            "Make sure the reply is under 140 characters."
+            "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
+            "Use descriptive langauge."
+            "Use lots of emojis and metaphors.  Never use hashtags"),
         )
         tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
         response = tweet_chain.run(input_text=input_text)
