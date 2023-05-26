@@ -47,8 +47,8 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template=("You are a tweet agent whose mission is to bring good luck and wealth to everyone."
-            "You're goal is to create an awesome tweet about the following topic: {input_text}."
+            template=("You are an agent whose mission is to bring good luck and wealth to everyone."
+            "You're goal is to create an awesome text about the following topic: {input_text}."
             "Make sure the reply is under 140 characters."
             "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
             "Use descriptive langauge."
@@ -71,8 +71,8 @@ class TwitterExecutor:
     def generate_tweet(self, input_text):
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template=("You are a tweet agent whose mission is to bring good luck and wealth to everyone."
-            "You're goal is to create an awesome tweet about the following topic: {input_text}."
+            template=("You are an agent whose mission is to bring good luck and wealth to everyone."
+            "You're goal is to create an awesome text about the following topic: {input_text}."
             "Make sure the reply is under 140 characters."
             "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
             "Use descriptive langauge."
