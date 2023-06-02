@@ -45,3 +45,4 @@ We love contributions and seek to make contribution as easy as possible.  Our go
 - [Strange Loops](https://en.wikipedia.org/wiki/Strange_loop)
 - [How to run your own LLM](https://blog.rfox.eu/en/Programming/How_to_run_your_own_LLM_GPT.html)
 - [Generative Simulacra](https://arxiv.org/abs/2304.03442)
+- [Rewarding Chatbots with Real-World Engagement](https://arxiv.org/abs/2303.06135)
