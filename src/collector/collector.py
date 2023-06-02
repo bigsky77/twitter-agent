@@ -35,6 +35,14 @@ class TwitterCollector:
         print(results)
         return results
 
+    def retrieve_user_tweets(self):
+        res = self.client.get_users_tweets(id=self.USER_ID)
+        print(res)
+
+    def retrieve_tweet(self):
+        res = self.client.get_tweet(id=1664601275944828933)
+        print(res)
+
     def retrieve_dms(self):
         res = self.client.get_direct_message_events(max_results=10)
         print(res)

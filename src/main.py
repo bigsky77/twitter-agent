@@ -4,7 +4,7 @@ import yaml
 import random
 import prompts
 
-from twitter_client import fetch_client
+from twitter_client import fetch_client, fetch_v2_client
 from langchain.vectorstores import DeepLake
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
@@ -24,6 +24,7 @@ with open("./params.yaml", "r") as file:
 
 
 def main():
+    twitterClient_v2 = fetch_v2_client()
     twitterClient = fetch_client()
     llm = OpenAI(temperature=0.9)
 
@@ -47,7 +48,7 @@ def main():
 
 
 def run(db, collector, strategy, executor):
-    # while True:
+    while True:
     # Step 1: Collect timeline tweets
     timeline_tweets = collector.retrieve_timeline(10)
 
@@ -57,11 +58,12 @@ def run(db, collector, strategy, executor):
     # Step 4: Pass actions to Executor
     executor.execute_actions(tweet_actions=actions)
 
+    text = ''
+    for tweet in timeline_tweets:
+        text += tweet.page_content + ''
+
     # Step 5: Generate a tweet
-    time.sleep(600)
-    themes = prompts["themes"]
-    tweet_theme = random.choice(themes)
-    executor.generate_tweet(tweet_theme)
+    executor.generate_tweet(text)
 
     # Sleep for an hour (3600 seconds) before the next iteration
     print("Sleeping for an hour...")

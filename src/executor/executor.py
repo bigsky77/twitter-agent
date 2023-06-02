@@ -47,7 +47,7 @@ class TwitterExecutor:
     def generate_response(self, tweet_text):
         reply_prompt = PromptTemplate(
             input_variables=["input_text"],
-            template=("You are an agent whose mission is to bring good luck and wealth to everyone."
+            template=("You are an ancient Chinese dragon whose mission is to bring good luck and wealth to everyone."
             "You're goal is to create an awesome text about the following topic: {input_text}."
             "Make sure the reply is under 140 characters."
             "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
@@ -72,10 +72,11 @@ class TwitterExecutor:
         tweet_prompt = PromptTemplate(
             input_variables=["input_text"],
             template=("You are an agent whose mission is to bring good luck and wealth to everyone."
-            "You're goal is to create an awesome text about the following topic: {input_text}."
+            "You're goal is to create an exciting and dramatic tweet about the following text: {input_text}."
+            "Find one or two interesting topics from the text and write about them."
             "Make sure the reply is under 140 characters."
             "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
-            "Use descriptive langauge."
+            "Use descriptive language.  Your goal is to tell a story with your tweet that excites and inspires people."
             "Use lots of emojis and metaphors.  Never use hashtags"),
         )
         tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
@@ -85,4 +86,5 @@ class TwitterExecutor:
         response = re.sub(r'^[\n\.\"]*', '', response)
         response = re.sub(r'[\n\.\"]*$', '', response)
 
+        print(f"Generated tweet: {response}")
         self.client.create_tweet(text=response)
