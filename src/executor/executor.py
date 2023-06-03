@@ -17,9 +17,6 @@ class TwitterExecutor:
     def get_user(self, user_id):
         return self.client.get_user(user_id)
 
-    def get_my_timeline(self, count):
-        return self.client.get_home_timeline(max_results=count)
-
     def execute_actions(self, tweet_actions: List[Dict[str, Any]]):
         for tweet_action in tweet_actions:
             if tweet_action.metadata["action"] == "like_timeline_tweets":

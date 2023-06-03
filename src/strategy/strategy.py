@@ -4,10 +4,17 @@ from typing import Any, Dict, Iterable, List
 
 
 class TwitterStrategy:
-    def __init__(self, client, llm, params):
+    def __init__(self, client, llm, params, deeplake):
         self.client = client
         self.llm = llm
         self.params = params
+        self.deeplake = deeplake
+
+    def ingest(self, twitterstate):
+        print("Ingesting tweets...")
+        print("Analyzing tweets...")
+        results = self.select_action(twitterstate.home_timeline)
+        return results
 
     def analyze_tweets(self, timeline_tweets):
         return timeline_tweets
