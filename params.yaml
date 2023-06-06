@@ -32,3 +32,5 @@ response_probability: 0.1
 like_probability: 0.3
 retweet_probability: 0.1
 action_threshold: 0.8
+
+list_id: [1655930960750473218, 1655930961509621769, 1655930563860246530]

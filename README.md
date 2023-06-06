@@ -1,6 +1,11 @@
-# Twitter-Agent 🐣
+#  🐣 Twitter-Agent 
 
-This Python script is an example of an autonomous AI-powered agent for interacting with the Twitter API. The system uses OpenAI and LangChain to tweet, send direct messages, and reply to mentions. Unlike a traditional Twitter Bot, this agent is designed to dynamically interact with the environment.  The agent uses a variety of tools (such as searching google and wikipedia). 
+## 🤔 What is this?
+
+Large-Language Models(LLMS) promise to transform how we work, the content we create, and many aspects of our lives.  Today, we think of these models as working in isolation.  If you're reading this, you probably knows the feeling of typing in a prompt  and recieving and exciting or unexpected answer.  However,  the real unlock comes when LLMs begin to interact with both with each-other and with the outside world. 
+
+This software is a prototype for coordinating and training multiple LLMs through interactions with the Twitter API. 
+
 
 ## Capabilities
 

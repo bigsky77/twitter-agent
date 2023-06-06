@@ -1,8 +1,13 @@
+"""Twitter-Agent Entry Point"""
+
 import os
 import time
 import yaml
-import random
-import prompts
+import asyncio
+from functools import wraps
+
+import click
+
 
 from twitter_client import fetch_client, fetch_v2_client
 from langchain.vectorstores import DeepLake
@@ -22,14 +27,24 @@ USER_ID = os.getenv("USER_ID", "")
 with open("./params.yaml", "r") as file:
     params = yaml.safe_load(file)
 
-# spawn memory
-embeddings = OpenAIEmbeddings(disallowed_special=())
-deeplake = DeepLake(
-  dataset_path="./data/", embedding_function=embeddings, read_only=False
-)
+def async_command(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        return asyncio.run(f(*args, **kwargs))
+
+    return wrapper
 
 
-def main():
+@click.group()
+def cli():
+    pass
+
+
+
+@cli.command()
+@click.option("--fetch-status", default=None, help="Fetch updates from twitter")
+@async_command
+async def main(fetch_status):
     twitterClient_v2 = fetch_v2_client()
     twitterClient = fetch_client()
     llm = OpenAI(temperature=0.9)
@@ -38,16 +53,18 @@ def main():
     collector = TwitterCollector(twitterClient, twitterClient_v2, USER_ID, params)
 
     # spawn strategy
-    strategy = TwitterStrategy(client=twitterClient, llm=llm, params=params, deeplake=deeplake)
+    strategy = TwitterStrategy(client=twitterClient, llm=llm, params=params)
 
     # spawn executor
     executor = TwitterExecutor(twitterClient, llm)
 
+    if fetch_status:
+        collector.fetch_status()
     # run
-    run(deeplake, collector, strategy, executor)
+    #run(collector, strategy, executor)
 
 
-def run(deeplake, collector, strategy, executor):
+def run(collector, strategy, executor):
     while True:
         # Step 1: Run Collector
         twitterstate = collector.run()
@@ -59,7 +76,7 @@ def run(deeplake, collector, strategy, executor):
         executor.execute_actions(tweet_actions=actions)
 
         text = ''
-        for tweet in twitterstate.home_timeline:
+        for tweet in twitterstate.list_tweets:
             text += tweet.page_content + ''
 
         # Step 5: Generate a tweet
@@ -70,4 +87,5 @@ def run(deeplake, collector, strategy, executor):
         time.sleep(3600)
 
 if __name__ == "__main__":
+
     main()

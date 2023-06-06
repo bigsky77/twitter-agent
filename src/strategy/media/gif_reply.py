@@ -6,8 +6,9 @@ import pytz
 import yaml
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+import urllib.request
+import json
 import requests
-import urllib.request, json, requests, time
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 from langchain.chains import LLMChain
@@ -28,7 +29,11 @@ api = tweepy.API(auth)
 llm = OpenAI(temperature=0.9)
 gif_prompt = PromptTemplate(
     input_variables=["input_text"],
-    template="You are a GIF search agent.  Based on the: {input_text} return three keywords as a single line like `stallion joy wealth`. Do not use line breaks, or commas. Your goal is to find a gif to match the input.  wealth and joy is best",
+    template=("You are a GIF search agent."
+              "Based on the: {input_text} return three keywords as a single line like `stallion joy wealth`."
+              "Only reply with the three keywords."
+              "Do not use line breaks, or commas."
+              "Your goal is to find a gif to match the input.  Wealth and Joy is best"),
 )
 gif_chain = LLMChain(llm=llm, prompt=gif_prompt)
 
@@ -86,6 +91,7 @@ def gif_post(gif_url_list, msg):
     random_index = random.randint(
         0, len(gif_url_list) - 1
     )  # Randomly select an index from the gif_url_list
+
     try:
         gif_download(gif_url_list[random_index])
         m = modifier(msg[random_index])
@@ -93,7 +99,6 @@ def gif_post(gif_url_list, msg):
         return result
     except Exception as e:
         print("Error occurred: ", e)
-        traceback.print_exc()
 
 
 def search_gif(query):
@@ -127,13 +132,12 @@ def search_gif(query):
         slugs.append(slug)
 
     media_id = gif_post(gif_urls, slugs)
-    gif_urls = []
-    slugs = []
     return media_id
 
 
 def generate_gif_response(text):
     gif_response = gif_chain.run(text)
+
     res = search_gif(gif_response)
     print(res.media_id_string)
     return [res.media_id_string]

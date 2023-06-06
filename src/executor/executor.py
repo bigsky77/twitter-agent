@@ -58,6 +58,11 @@ class TwitterExecutor:
         response = re.sub(r'^[\n\.\"]*', '', response)
         response = re.sub(r'[\n\.\"]*$', '', response)
 
+        val = self._check_length(response)
+
+        if val == False:
+            response = self.generate_response(tweet_text)
+
         return response
 
     def quote_tweet(self, tweet_text, tweet_id):
@@ -83,5 +88,14 @@ class TwitterExecutor:
         response = re.sub(r'^[\n\.\"]*', '', response)
         response = re.sub(r'[\n\.\"]*$', '', response)
 
+        val = self._check_length(response)
+
+        if val == False:
+            response = self.generate_tweet(tweet_text)
+
         print(f"Generated tweet: {response}")
         self.client.create_tweet(text=response)
+
+    def _check_length(self, text):
+        if len(text) > 280:
+            return False

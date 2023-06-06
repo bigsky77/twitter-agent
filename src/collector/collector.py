@@ -8,16 +8,16 @@ class TwitterState:
     def __init__(
         self,
         date: int,
-        time: int,
-        home_timeline: List[Document],
+        time_now: int,
         follower_count: int,
         direct_messages: List[Document],
+        list_tweets: List[Document],
     ):
         self.date = date
-        self.time = time
-        self.home_timeline = home_timeline
+        self.time_now = time_now
         self.follower_count = follower_count
         self.direct_messages = direct_messages
+        self.list_tweets = list_tweets
 
 
 class TwitterCollector:
@@ -30,13 +30,36 @@ class TwitterCollector:
     def run(self):
         date = time.strftime("%Y-%m-%d")
         time_now = time.strftime("%H:%M:%S")
-        home_timeline = self.retrieve_timeline(10)
         follower_count = self.retrieve_followers()
         direct_messages = self.retrieve_dms()
+        list_tweets = self.retrieve_weighted_lists(10, self.params["list_id"])
         twitter_state = TwitterState(
-            date, time_now, home_timeline, follower_count, direct_messages
+            date, time_now, follower_count, direct_messages, list_tweets
         )
         return twitter_state
+
+    def fetch_status(self):
+        followers = self.retrieve_followers()
+
+        res = self.client_v2.get_users_tweets(id=self.USER_ID, max_results=10)
+        tweets = self._format_tweets(res)
+
+        user = self.client_v2.get_user(id=self.USER_ID)
+
+        total_likes = 0
+        for tweet in tweets:
+            tweet_id = tweet.metadata["tweet_id"]
+            likes = self.client_v2.get_liking_users(tweet_id)
+            meta_data = likes[1] if len(likes) > 1 else {}
+            result_count = meta_data.get('result_count', 0)
+            total_likes += result_count
+            time.sleep(1)
+
+        print("User Name:", user.data.name)
+        print("User ID:", self.USER_ID)
+        print("Follower Count:", len(followers))
+        print("Total Likes:", total_likes)
+        print("Average Likes:", total_likes / 10)
 
     def get_tweet_info(self, tweet_id: int):
         return self.client.get_tweet(tweet_id)
@@ -51,7 +74,7 @@ class TwitterCollector:
 
     def retrieve_list(self, max_results: int, list_id: int) -> List[Document]:
         results: List[Document] = []
-        tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
+        tweets = self.client_v2.get_list_tweets(id=list_id, max_results=max_results)
         docs = self._format_tweets(tweets)
         results.extend(docs)
         return results
@@ -68,16 +91,10 @@ class TwitterCollector:
     ) -> List[Document]:
         results: List[Document] = []
         for list_id in list_ids:
-            tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
+            tweets = self.client_v2.get_list_tweets(id=list_id, max_results=max_results)
             docs = self._format_tweets(tweets)
             results.extend(docs)
         return results
-
-    def retrieve_user_tweets(self):
-        res = self.client.get_users_tweets(id=self.USER_ID)
-
-    def retrieve_tweet(self):
-        res = self.client.get_tweet(id=1664601275944828933)
 
     def retrieve_dms(self):
         res = self.client.get_direct_message_events(max_results=30)
@@ -86,10 +103,8 @@ class TwitterCollector:
     def _format_tweets(self, tweets: List[Dict[str, Any]]) -> Iterable[Document]:
         """Format tweets into a string."""
         for tweet in tweets.data:
-            liking_users = self.client_v2.get_liking_users(id=tweet.id)
             metadata = {
                 "tweet_id": tweet.id,
-                "liking_users": liking_users,
                 "action": "none",
             }
             yield Document(
