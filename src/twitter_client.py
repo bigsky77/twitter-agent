@@ -23,7 +23,7 @@ def fetch_client():
     return client
 
 def fetch_v2_client():
-    # Set up OAuth 1.0a authentication
+    # Set up OAuth 2.0 authentication
     client = tweepy.Client(
             bearer_token=BEARER_TOKEN,
     )
