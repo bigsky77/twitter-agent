@@ -16,12 +16,6 @@ Twitter-Agent is a python framework for concurently running multiple AI-powered 
 
 To use the script, you will need to follow these steps:
 
-## Currently Deployed Agents
-
- - [lil bigsky agi](https://twitter.com/lil_bigsky_agi)
- - [lil remilio agi](https://twitter.com/lil_remilio_agi)
- - [luna](https://twitter.com/lil_luna_agi)
-
 ### Installation
 
 1. Clone the repository via `git clone https://github.com/bigsky77/khafre.git` and `cd` into the cloned repository.
@@ -44,6 +38,12 @@ In order to deploy this agent, sign up for a [Render](https://render.com/) or an
 ### Contribute
 
 We love contributions and seek to make contribution as easy as possible.  Our goal with this project is to make the worlds-best AGI Twitter agent.  If that sounds interesting to you, please reach out!
+
+## Currently Deployed Agents
+
+ - [lil bigsky agi](https://twitter.com/lil_bigsky_agi)
+ - [lil remilio agi](https://twitter.com/lil_remilio_agi)
+ - [luna](https://twitter.com/lil_luna_agi)
 
 ### References
 
