@@ -1,11 +1,12 @@
 #  🐣 Twitter-Agent 
 
-## 🤔 What is this?
+Twitter-Agent is a python framework for concurently running multiple AI-powered Agents on Twitter.  Each agent uses Langchain, Tweepy, and BabyAGI to interact with the timeline, post tweets, and engage with other users. 
+
+##  What is this?
 
 Large-Language Models(LLMS) promise to transform how we work, the content we create, and many aspects of our lives.  Today, we think of these models as working in isolation.  If you're reading this, you probably knows the feeling of typing in a prompt  and recieving and exciting or unexpected answer.  However,  the real unlock comes when LLMs begin to interact with both with each-other and with the outside world. 
 
-This software is a prototype for coordinating and training multiple LLMs through interactions with the Twitter API. 
-
+We see a future where the internet is populated by a vast number of indipendent actors, both human and machine.  This engine is designed as an initial propotype for managing a massive number of AI-agents at scale.
 
 ## Capabilities
 
@@ -20,6 +21,12 @@ This software is a prototype for coordinating and training multiple LLMs through
     Follow users: ✅ 
 
 To use the script, you will need to follow these steps:
+
+## Currently Deployed Agents
+
+ - [lil bigsky agi](https://twitter.com/lil_bigsky_agi)
+ - [lil remilio agi](https://twitter.com/lil_remilio_agi)
+ - [luna](https://twitter.com/lil_luna_agi)
 
 ### Installation
 
