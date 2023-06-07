@@ -21,83 +21,74 @@ class TwitterState:
 
 
 class TwitterCollector:
-    def __init__(self, client, client_v2, USER_ID, params):
+    def __init__(self, client, USER_ID, params):
         self.client = client
         self.USER_ID = USER_ID
         self.params = params
-        self.client_v2 = client_v2
 
-    def run(self):
+    async def run(self):
         date = time.strftime("%Y-%m-%d")
         time_now = time.strftime("%H:%M:%S")
-        follower_count = self.retrieve_followers()
-        direct_messages = self.retrieve_dms()
-        list_tweets = self.retrieve_weighted_lists(10, self.params["list_id"])
+        follower_count = await self.retrieve_followers()
+        direct_messages = await self.retrieve_dms()
+        list_tweets = await self.retrieve_weighted_lists(5)
         twitter_state = TwitterState(
             date, time_now, follower_count, direct_messages, list_tweets
         )
         return twitter_state
 
-    def fetch_status(self):
+    async def fetch_status(self):
         followers = self.retrieve_followers()
-
-        res = self.client_v2.get_users_tweets(id=self.USER_ID, max_results=10)
-        tweets = self._format_tweets(res)
-
-        user = self.client_v2.get_user(id=self.USER_ID)
-
-        total_likes = 0
-        for tweet in tweets:
-            tweet_id = tweet.metadata["tweet_id"]
-            likes = self.client_v2.get_liking_users(tweet_id)
-            meta_data = likes[1] if len(likes) > 1 else {}
-            result_count = meta_data.get('result_count', 0)
-            total_likes += result_count
-            time.sleep(1)
-
-        print("User Name:", user.data.name)
-        print("User ID:", self.USER_ID)
         print("Follower Count:", len(followers))
-        print("Total Likes:", total_likes)
-        print("Average Likes:", total_likes / 10)
 
-    def get_tweet_info(self, tweet_id: int):
+    def get_me(self):
+        agent = self.client.get_me()
+        print("Agent Name:", agent.data.name)
+        print("Agent ID:", agent.data.id)
+        return agent
+
+    async def get_tweet_info(self, tweet_id: int):
         return self.client.get_tweet(tweet_id)
 
     # convert to vector storable document
-    def retrieve_timeline(self, count) -> List[Document]:
+    async def retrieve_timeline(self, count) -> List[Document]:
         results: List[Document] = []
         tweets = self.client.get_home_timeline(max_results=count)
         docs = self._format_tweets(tweets)
         results.extend(docs)
         return results
 
-    def retrieve_list(self, max_results: int, list_id: int) -> List[Document]:
+    async def retrieve_list(self, max_results: int, list_id: int) -> List[Document]:
         results: List[Document] = []
-        tweets = self.client_v2.get_list_tweets(id=list_id, max_results=max_results)
+        tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
         docs = self._format_tweets(tweets)
         results.extend(docs)
         return results
 
-    def retrieve_followers(self) -> List[Document]:
+    async def retrieve_followers(self) -> List[Document]:
         results: List[Document] = []
-        followers = self.client_v2.get_users_followers(id=self.USER_ID)
+        followers = self.client.get_users_followers(id=self.USER_ID)
         docs = self._format_followers(followers)
         results.extend(docs)
         return results
 
-    def retrieve_weighted_lists(
-        self, max_results: int, list_ids: List[int]
+    async def retrieve_weighted_lists(
+        self, max_results: int
     ) -> List[Document]:
+        lists_response = self.client.get_owned_lists(id=self.USER_ID)
+        lists = lists_response.data
+
         results: List[Document] = []
-        for list_id in list_ids:
-            tweets = self.client_v2.get_list_tweets(id=list_id, max_results=max_results)
+        for list_data in lists:
+            list_id = list_data["id"]
+            tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
             docs = self._format_tweets(tweets)
             results.extend(docs)
+
         return results
 
-    def retrieve_dms(self):
-        res = self.client.get_direct_message_events(max_results=30)
+    async def retrieve_dms(self):
+        res = self.client.get_direct_message_events(max_results=3)
         return res
 
     def _format_tweets(self, tweets: List[Dict[str, Any]]) -> Iterable[Document]:

@@ -9,23 +9,20 @@ from functools import wraps
 import click
 
 
-from twitter_client import fetch_client, fetch_v2_client
-from langchain.vectorstores import DeepLake
-from langchain.embeddings.openai import OpenAIEmbeddings
+from twitter_client import fetch_clients
 from langchain.llms import OpenAI
 
 from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
-from strategy.strategy import TwitterStrategy
+from strategy import create_strategy
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-SERPER_API_KEY = os.getenv("SERPER_API_KEY", "")
-ACTIVELOOP_TOKEN = os.getenv("ACTIVELOOP_TOKEN", "")
 USER_ID = os.getenv("USER_ID", "")
 
 with open("./params.yaml", "r") as file:
     params = yaml.safe_load(file)
+
 
 def async_command(f):
     @wraps(f)
@@ -40,52 +37,63 @@ def cli():
     pass
 
 
-
 @cli.command()
-@click.option("--fetch-status", default=None, help="Fetch updates from twitter")
+@click.option("--fetch-status", default=False, help="Fetch updates from twitter")
 @async_command
 async def main(fetch_status):
-    twitterClient_v2 = fetch_v2_client()
-    twitterClient = fetch_client()
+    client_data = fetch_clients()
     llm = OpenAI(temperature=0.9)
 
-    # spawn collector
-    collector = TwitterCollector(twitterClient, twitterClient_v2, USER_ID, params)
+    # spawn collector, strategy, and executor for each client
+    agents = []
+    for data in client_data:
+        client = data["client"]
+        strategy_type = data["strategy"]
+        agent_id = data["agent_id"]
+        agent_name = data["user_name"]
 
-    # spawn strategy
-    strategy = TwitterStrategy(client=twitterClient, llm=llm, params=params)
+        collector = TwitterCollector(client, agent_id, params)
+        strategy = create_strategy(agent_id, llm, params, strategy_type)
+        executor = TwitterExecutor(client, llm)
 
-    # spawn executor
-    executor = TwitterExecutor(twitterClient, llm)
+        agents.append((collector, strategy, executor, agent_name))
 
     if fetch_status:
-        collector.fetch_status()
+        for collector, _, _ in agents:
+            collector.get_me()
+
     # run
-    #run(collector, strategy, executor)
+    await asyncio.gather(
+        *(
+            run(collector, strategy, executor, agent_name)
+            for collector, strategy, executor, agent_name in agents
+        )
+    )
 
+async def run(collector, strategy, executor, agent_name):
 
-def run(collector, strategy, executor):
+    print(f"\033[92m\033[1m\n*****Running {agent_name} Engine *****\n\033[0m\033[0m")
+
     while True:
-        # Step 1: Run Collector
-        twitterstate = collector.run()
+        try:
+            # Step 1: Run Collector
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Collector *****\n\033[0m\033[0m")
+            twitterstate =  await collector.run()
 
-        # Step 2: Pass timeline tweets to Strategy
-        actions = strategy.ingest(twitterstate)
+            # Step 2: Pass timeline tweets to Strategy
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Strategy *****\n\033[0m\033[0m")
+            actions = strategy.ingest(twitterstate)
 
-        # Step 4: Pass actions to Executor
-        executor.execute_actions(tweet_actions=actions)
+            # Step 4: Pass actions to Executor
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Executor *****\n\033[0m\033[0m")
+            executor.execute_actions(tweet_actions=actions)
 
-        text = ''
-        for tweet in twitterstate.list_tweets:
-            text += tweet.page_content + ''
+            # Sleep for an hour (3600 seconds) before the next iteration
+            print("Sleeping for an hour...")
+            await asyncio.sleep(3600)
+        except Exception as e:
+            print(f"Error in run: {e}")
 
-        # Step 5: Generate a tweet
-        executor.generate_tweet(text)
-
-        # Sleep for an hour (3600 seconds) before the next iteration
-        print("Sleeping for an hour...")
-        time.sleep(3600)
 
 if __name__ == "__main__":
-
-    main()
+    asyncio.run(main())

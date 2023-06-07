@@ -88,10 +88,10 @@ class TwitterExecutor:
         response = re.sub(r'^[\n\.\"]*', '', response)
         response = re.sub(r'[\n\.\"]*$', '', response)
 
-        val = self._check_length(response)
+        _len_check = self._check_length(response)
 
-        if val == False:
-            response = self.generate_tweet(tweet_text)
+        if _len_check is False:
+            self.generate_tweet(input_text)
 
         print(f"Generated tweet: {response}")
         self.client.create_tweet(text=response)
