@@ -1,0 +1,17 @@
+- id: xxxxxxxxxxxxx
+  user_name: xxxxxxxxxxxxx
+  strategy: basic
+  token: xxxxxxxxxxxxx
+  secret: xxxxxxxxxxxxx
+
+- id: xxxxxxxxxxxxx
+  user_name: xxxxxxxxxxxxx
+  strategy: basic
+  token: xxxxxxxxxxxxx
+  secret: xxxxxxxxxxxxx
+
+- id: xxxxxxxxxxxxx
+  user_name: xxxxxxxxxxxxx
+  strategy: basic
+  token: xxxxxxxxxxxxx
+  secret: xxxxxxxxxxxxx
