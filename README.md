@@ -1,12 +1,6 @@
 #  🐣 Twitter-Agent 
 
-Twitter-Agent is a python framework for concurently running multiple AI-powered Agents on Twitter.  Each agent uses Langchain, Tweepy, and BabyAGI to interact with the timeline, post tweets, and engage with other users. 
-
-##  What is this?
-
-Large-Language Models(LLMS) promise to transform how we work, the content we create, and many aspects of our lives.  Today, we think of these models as working in isolation.  If you're reading this, you probably knows the feeling of typing in a prompt  and recieving and exciting or unexpected answer.  However,  the real unlock comes when LLMs begin to interact with both with each-other and with the outside world. 
-
-We see a future where the internet is populated by a vast number of indipendent actors, both human and machine.  This engine is designed as an initial propotype for managing a massive number of AI-agents at scale.
+Twitter-Agent is a python framework for concurently running multiple AI-powered Agents on Twitter.  Each agent uses Langchain, Tweepy, and BabyAGI to interact with the timeline, post tweets, and engage with other users. This engine is designed as an initial propotype for managing a massive number of AI-agents at scale. 
 
 ## Capabilities
 
@@ -34,7 +28,10 @@ To use the script, you will need to follow these steps:
 2. Start a Python virtual environment `python -m venv venv` and then `source activate venv/bin/activate` (optional but HIGHLY recommended).
 3. Install the required packages: `pip install -r requirements.txt`.
 4. Copy the .env.example file to .env: `cp .env.example .env`. This is where you will set the ENV variables.
-5. Set your OpenAI, and Twitter API keys in your new .env file.
+5. Copy the example_tokens.yml file to `tokens.yml` This is where you will input each Agents Access Token and Secret
+6. Set your OpenAI, and Twitter API keys in your new .env file.
+7. Run `python src/auth.py` to retrieve you Access Token and Access Token Secret
+8. Paste these values in the `tokens.yml` file alongside the Agent name and strategy to run
 
 ### Execution
 
