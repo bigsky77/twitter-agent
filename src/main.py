@@ -54,7 +54,7 @@ async def main(fetch_status):
 
         collector = TwitterCollector(client, agent_id, params)
         strategy = create_strategy(agent_id, llm, params, strategy_type)
-        executor = TwitterExecutor(client, llm)
+        executor = TwitterExecutor(client)
 
         agents.append((collector, strategy, executor, agent_name))
 
@@ -72,24 +72,24 @@ async def main(fetch_status):
 
 async def run(collector, strategy, executor, agent_name):
 
-    print(f"\033[92m\033[1m\n*****Running {agent_name} Engine *****\n\033[0m\033[0m")
+    print(f"\033[92m\033[1m\n*****Running {agent_name} Engine 🚒 *****\n\033[0m\033[0m")
 
     while True:
         try:
             # Step 1: Run Collector
-            print(f"\033[92m\033[1m\n*****Running {agent_name} Collector *****\n\033[0m\033[0m")
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Collector 🔎 *****\n\033[0m\033[0m")
             twitterstate =  await collector.run()
 
             # Step 2: Pass timeline tweets to Strategy
-            print(f"\033[92m\033[1m\n*****Running {agent_name} Strategy *****\n\033[0m\033[0m")
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Strategy 🐲*****\n\033[0m\033[0m")
             actions = strategy.ingest(twitterstate)
 
             # Step 4: Pass actions to Executor
-            print(f"\033[92m\033[1m\n*****Running {agent_name} Executor *****\n\033[0m\033[0m")
+            print(f"\033[92m\033[1m\n*****Running {agent_name} Executor🌠 *****\n\033[0m\033[0m")
             executor.execute_actions(tweet_actions=actions)
 
             # Sleep for an hour (3600 seconds) before the next iteration
-            print("Sleeping for an hour...")
+            print("Sleeping for an hour💤 💤💤")
             await asyncio.sleep(3600)
         except Exception as e:
             print(f"Error in run: {e}")

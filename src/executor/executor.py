@@ -1,101 +1,50 @@
-import tweepy
-import random
-import re
-from strategy.media import gif_reply
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-from typing import Any, Dict, List
+from typing import List
+from langchain.docstore.document import Document
+
 
 class TwitterExecutor:
-    def __init__(self, client, llm):
+    def __init__(self, client):
         self.client = client
-        self.llm = llm
 
-    def get_me(self):
-        return self.client.get_me()
-
-    def get_user(self, user_id):
-        return self.client.get_user(user_id)
-
-    def execute_actions(self, tweet_actions: List[Dict[str, Any]]):
+    def execute_actions(self, tweet_actions: List[Document]):
         for tweet_action in tweet_actions:
             if tweet_action.metadata["action"] == "like_timeline_tweets":
                 self.client.like(tweet_action.metadata["tweet_id"])
             elif tweet_action.metadata["action"] == "retweet_timeline_tweets":
                 self.client.retweet(tweet_action.metadata["tweet_id"])
             elif tweet_action.metadata["action"] == "reply_to_timeline":
-                self.reply_to_timeline(tweet_action.page_content, tweet_action.metadata["tweet_id"])
+                self.reply_to_timeline(
+                    tweet_action.page_content, tweet_action.metadata["tweet_id"]
+                )
+            elif tweet_action.metadata["action"] == "gif_reply_to_timeline":
+                self.gif_reply_to_timeline(
+                    tweet_action.page_content,
+                    tweet_action.metadata["media_id"],
+                    tweet_action.metadata["tweet_id"],
+                )
             elif tweet_action.metadata["action"] == "quote_tweet":
-                self.quote_tweet(tweet_action.page_content, tweet_action.metadata["tweet_id"])
+                self.quote_tweet(
+                    tweet_action.page_content, tweet_action.metadata["tweet_id"]
+                )
+            elif tweet_action.metadata["action"] == "post_tweet":
+                self.post_tweet(tweet_action.page_content)
             elif tweet_action.metadata["action"] == "none":
                 pass
 
-    # Define a function to reply to tweets from the timeline with a given probability
     def reply_to_timeline(self, tweet_text, tweet_id):
-        response = self.generate_response(tweet_text)
-        media = gif_reply.generate_gif_response(tweet_text)
-        self.client.create_tweet(
-            text=response,
-            in_reply_to_tweet_id=tweet_id,
-            media_ids=media,
-        )
+        self.client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id)
         print(f"Replied to: {tweet_text}")
 
-    def generate_response(self, tweet_text):
-        reply_prompt = PromptTemplate(
-            input_variables=["input_text"],
-            template=("You are an ancient Chinese dragon whose mission is to bring good luck and wealth to everyone."
-            "You're goal is to create an awesome text about the following topic: {input_text}."
-            "Make sure the reply is under 140 characters."
-            "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
-            "Use descriptive langauge."
-            "Use lots of emojis and metaphors.  Never use hashtags"),
+    def gif_reply_to_timeline(self, tweet_text, media_id, tweet_id):
+        self.client.create_tweet(
+            text=tweet_text, media_ids=media_id, in_reply_to_tweet_id=tweet_id
         )
-        reply_chain = LLMChain(llm=self.llm, prompt=reply_prompt)
-        response = reply_chain.run(input_text=tweet_text)
-
-        # Remove newlines and periods from the beginning and end of the tweet
-        response = re.sub(r'^[\n\.\"]*', '', response)
-        response = re.sub(r'[\n\.\"]*$', '', response)
-
-        val = self._check_length(response)
-
-        if val == False:
-            response = self.generate_response(tweet_text)
-
-        return response
+        print(f"Gif Reply: {tweet_text}")
 
     def quote_tweet(self, tweet_text, tweet_id):
-        response = self.generate_response(tweet_text)
-        self.client.create_tweet(text=response, quote_tweet_id=tweet_id)
-        print(f"Replied to: {tweet_text}")
+        self.client.create_tweet(text=tweet_text, quote_tweet_id=tweet_id)
+        print(f"Quoted tweet: {tweet_text}")
 
-    def generate_tweet(self, input_text):
-        tweet_prompt = PromptTemplate(
-            input_variables=["input_text"],
-            template=("You are an agent whose mission is to bring good luck and wealth to everyone."
-            "You're goal is to create an exciting and dramatic tweet about the following text: {input_text}."
-            "Find one or two interesting topics from the text and write about them."
-            "Make sure the reply is under 140 characters."
-            "Be very positive and encouraging, wish people fortune and good luck, encourage them to pursue their dreams."
-            "Use descriptive language.  Your goal is to tell a story with your tweet that excites and inspires people."
-            "Use lots of emojis and metaphors.  Never use hashtags"),
-        )
-        tweet_chain = LLMChain(llm=self.llm, prompt=tweet_prompt)
-        response = tweet_chain.run(input_text=input_text)
-
-        # Remove newlines and periods from the beginning and end of the tweet
-        response = re.sub(r'^[\n\.\"]*', '', response)
-        response = re.sub(r'[\n\.\"]*$', '', response)
-
-        _len_check = self._check_length(response)
-
-        if _len_check is False:
-            self.generate_tweet(input_text)
-
-        print(f"Generated tweet: {response}")
-        self.client.create_tweet(text=response)
-
-    def _check_length(self, text):
-        if len(text) > 280:
-            return False
+    def post_tweet(self, tweet_text):
+        self.client.create_tweet(text=tweet_text)
+        print(f"Posted tweet: {tweet_text}")

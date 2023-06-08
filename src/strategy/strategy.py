@@ -1,11 +1,12 @@
 from .strategies.basic.basic import BasicTwitterStrategy
+from .strategies.remilio.remilio import RemilioTwitterStrategy
 from .strategies.advanced.advanced import AdvancedTwitterStrategy
 
 # Map strategy names to classes
 STRATEGY_MAP = {
     'basic': BasicTwitterStrategy,
     'advanced': AdvancedTwitterStrategy,
-    # Add additional strategies here as needed
+    'remilio': RemilioTwitterStrategy,
 }
 
 def create_strategy(agent_id, llm, params, strategy_name):

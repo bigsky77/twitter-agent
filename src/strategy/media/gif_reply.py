@@ -29,11 +29,12 @@ api = tweepy.API(auth)
 llm = OpenAI(temperature=0.9)
 gif_prompt = PromptTemplate(
     input_variables=["input_text"],
-    template=("You are a GIF search agent."
-              "Based on the: {input_text} return three keywords as a single line like `stallion joy wealth`."
-              "Only reply with the three keywords."
+    template=("You are a word matching agent."
+              "Based on the: {input_text} say three words as a single line like `stallion joy wealth`."
+              "Only reply with the three words."
+              "If you do not have three words, reply with a random celebrity name."
               "Do not use line breaks, or commas."
-              "Your goal is to find a gif to match the input.  Wealth and Joy is best"),
+              ),
 )
 gif_chain = LLMChain(llm=llm, prompt=gif_prompt)
 
@@ -136,8 +137,10 @@ def search_gif(query):
 
 
 def generate_gif_response(text):
-    gif_response = gif_chain.run(text)
+    gif_response = None
+    while not gif_response:
+        gif_response = gif_chain.run(text)
 
     res = search_gif(gif_response)
-    print(res.media_id_string)
-    return [res.media_id_string]
+    print("GIF Media ID", res.media_id_string)
+    return res.media_id_string

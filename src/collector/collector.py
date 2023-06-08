@@ -7,16 +7,8 @@ from langchain.docstore.document import Document
 class TwitterState:
     def __init__(
         self,
-        date: int,
-        time_now: int,
-        follower_count: int,
-        direct_messages: List[Document],
         list_tweets: List[Document],
     ):
-        self.date = date
-        self.time_now = time_now
-        self.follower_count = follower_count
-        self.direct_messages = direct_messages
         self.list_tweets = list_tweets
 
 
@@ -27,13 +19,9 @@ class TwitterCollector:
         self.params = params
 
     async def run(self):
-        date = time.strftime("%Y-%m-%d")
-        time_now = time.strftime("%H:%M:%S")
-        follower_count = await self.retrieve_followers()
-        direct_messages = await self.retrieve_dms()
         list_tweets = await self.retrieve_weighted_lists(5)
         twitter_state = TwitterState(
-            date, time_now, follower_count, direct_messages, list_tweets
+            list_tweets
         )
         return twitter_state
 

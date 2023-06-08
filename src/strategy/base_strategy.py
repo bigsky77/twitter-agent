@@ -1,56 +1,120 @@
 import random
 from langchain.docstore.document import Document
-from typing import Any, Dict, Iterable, List
+from typing import Iterable, List, Dict, Any
+from .media.gif_reply import generate_gif_response
 
 class TwitterStrategy:
     def __init__(self, agent_id, llm, params):
         self.agent_id = agent_id
         self.llm = llm
         self.params = params
+        self.action_mapping = {
+            "like_timeline_tweets": self.like_tweet,
+            "retweet_timeline_tweets": self.retweet_tweet,
+            "reply_to_timeline": self.reply_to_timeline,
+            "gif_reply_to_timeline": self.gif_reply_to_timeline,
+            "quote_tweet": self.quote_tweet,
+            "post_tweet": self.post_tweet,
+            "none": self.none_action,
+        }
 
     def ingest(self, twitterstate):
-        results = self.select_action(twitterstate.list_tweets)
+        results = self.process_and_action_tweets(twitterstate.list_tweets)
         return results
 
     def weighted_random_choice(self, actions, probabilities):
         return random.choices(actions, probabilities)[0]
 
-    def select_action(self, tweets: list[dict[str, any]]):
+    def process_and_action_tweets(self, tweets: List[Document]):
         actions = [
-            "post_tweet",
-            "quote_tweet",
-            "reply_to_timeline",
             "like_timeline_tweets",
             "retweet_timeline_tweets",
+            "reply_to_timeline",
+            "gif_reply_to_timeline",
+            "quote_tweet",
+            "post_tweet",
             "none",
         ]
 
         probabilities = [
-            0.05,  # post_tweet
-            0.05,  # quote_tweet
-            0.10,  # reply_to_timeline
             0.10,  # like_timeline_tweets
-            0.05,  # retweet_timeline_tweets
-            0.65,  # none
+            0.10,  # retweet_timeline_tweets
+            0.10,  # reply_to_timeline
+            0.00,  # gif_reply_to_timeline
+            0.10,  # quote_tweet
+            0.10,  # post_tweet
+            0.50,  # none
         ]
 
-
-        results: list[Document] = []
+        results: List[Document] = []
         for tweet in tweets:
-            # select an action based on the probabilities
             action = self.weighted_random_choice(actions, probabilities)
-            docs = self._update_tweet(tweet, action)
-            results.extend(docs)
+            method = self.action_mapping.get(action)
+            if method:
+                doc = method(tweet)
+                results.append(doc)
 
         return results
 
-    def _update_tweet(self, tweet: [dict[str, any]], action: str) -> Iterable[Document]:
-        """format tweets into a string."""
+    def post_tweet(self, tweet: Document):
+        response = self.generate_tweet(tweet.page_content)
+        metadata = {"action": "post_tweet"}
+        return Document(page_content=response, metadata=metadata)
+
+    def reply_to_timeline(self, tweet: Document):
+        response = self.generate_response(tweet.page_content)
         metadata = {
             "tweet_id": tweet.metadata["tweet_id"],
-            "action": action,
+            "action": "reply_to_timeline",
         }
-        yield Document(
-            page_content=tweet.page_content,
-            metadata=metadata,
-        )
+        return Document(page_content=response, metadata=metadata)
+
+    def gif_reply_to_timeline(self, tweet: Document):
+        response = self.generate_response(tweet.page_content)
+        media_id = self.generate_gif(tweet.page_content)
+        metadata = {
+            "tweet_id": tweet.metadata["tweet_id"],
+            "media_id": media_id,
+            "action": "gif_reply_to_timeline",
+        }
+        return Document(page_content=response, metadata=metadata)
+
+    def like_tweet(self, tweet: Document):
+        # As like action doesn't generate a response, metadata will be sufficient
+        metadata = {
+            "tweet_id": tweet.metadata["tweet_id"],
+            "action": "like_timeline_tweets",
+        }
+        return Document(page_content=tweet.page_content, metadata=metadata)
+
+    def retweet_tweet(self, tweet: Document):
+        # Similarly for retweet action
+        metadata = {
+            "tweet_id": tweet.metadata["tweet_id"],
+            "action": "retweet_timeline_tweets",
+        }
+        return Document(page_content=tweet.page_content, metadata=metadata)
+
+    def quote_tweet(self, tweet: Document):
+        response = self.generate_response(tweet.page_content)
+        metadata = {"tweet_id": tweet.metadata["tweet_id"], "action": "quote_tweet"}
+        return Document(page_content=response, metadata=metadata)
+
+    def none_action(self, tweet: Document):
+        # No action, just return metadata with action as "none"
+        metadata = {"tweet_id": tweet.metadata["tweet_id"], "action": "none"}
+        return Document(page_content=tweet.page_content, metadata=metadata)
+
+    def generate_tweet(self, prompt):
+        return "hello world"
+
+    def generate_response(self, prompt):
+        return "hello world"
+
+    def generate_gif(self, prompt):
+        gif_id = generate_gif_response(prompt)
+        return gif_id
+
+    def _check_length(self, text):
+        if len(text) > 280:
+            return False
