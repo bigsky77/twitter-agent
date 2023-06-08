@@ -2,6 +2,24 @@ import yaml
 import time
 from typing import Any, Dict, Iterable, List
 from langchain.docstore.document import Document
+import datetime
+
+class Report:
+    def __init__(self, agent_name, agent_id, followers_count, average_ratio):
+        self.date = datetime.datetime.now()
+        self.agent_name = agent_name
+        self.agent_id = agent_id
+        self.followers_count = followers_count
+        self.average_ratio = average_ratio
+
+    def __str__(self):
+        return (
+            f"Date: {self.date}\n"
+            f"Agent Name: {self.agent_name}\n"
+            f"Agent ID: {self.agent_id}\n"
+            f"Follower Count: {self.followers_count}\n"
+            f"Average Likes to Followers Ratio: {self.average_ratio}"
+        )
 
 
 class TwitterState:
@@ -11,11 +29,10 @@ class TwitterState:
     ):
         self.list_tweets = list_tweets
 
-
 class TwitterCollector:
-    def __init__(self, client, USER_ID, params):
-        self.client = client
+    def __init__(self, USER_ID, client, params):
         self.USER_ID = USER_ID
+        self.client = client
         self.params = params
 
     async def run(self):
@@ -29,11 +46,23 @@ class TwitterCollector:
         followers = self.retrieve_followers()
         print("Follower Count:", len(followers))
 
-    def get_me(self):
+    def generate_report(self, tweet_ids: List[int]):
         agent = self.client.get_me()
-        print("Agent Name:", agent.data.name)
-        print("Agent ID:", agent.data.id)
-        return agent
+        followers_count = len(self.retrieve_followers())
+        likes_to_followers_ratios = []
+
+        for tweet_id in tweet_ids:
+            likes_response = self.client.get_liking_users(id=tweet_id)
+            likes_count = likes_response.meta['result_count']
+
+            ratio = likes_count / followers_count if followers_count else 0  # Avoid division by zero.
+            likes_to_followers_ratios.append(ratio)
+
+        average_ratio = sum(likes_to_followers_ratios) / len(likes_to_followers_ratios) if likes_to_followers_ratios else 0  # Avoid division by zero.
+
+        report = Report(agent.data.name, agent.data.id, followers_count, average_ratio)
+
+        return report
 
     async def get_tweet_info(self, tweet_id: int):
         return self.client.get_tweet(tweet_id)
@@ -53,7 +82,7 @@ class TwitterCollector:
         results.extend(docs)
         return results
 
-    async def retrieve_followers(self) -> List[Document]:
+    def retrieve_followers(self) -> List[Document]:
         results: List[Document] = []
         followers = self.client.get_users_followers(id=self.USER_ID)
         docs = self._format_followers(followers)

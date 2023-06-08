@@ -18,18 +18,27 @@ To use the script, you will need to follow these steps:
 
 ### Installation
 
-1. Clone the repository via `git clone https://github.com/bigsky77/khafre.git` and `cd` into the cloned repository.
-2. Start a Python virtual environment `python -m venv venv` and then `source activate venv/bin/activate` (optional but HIGHLY recommended).
-3. Install the required packages: `pip install -r requirements.txt`.
+#### Initial Set-Up
+1. Clone the repository via `git clone https://github.com/bigsky77/twitter-agent.git` 
+2.  Change to the twitter-agent directory `cd twitter-agent` 
+3. Create a Python virtual environment `python -m venv venv` and 
+4. Activate virtual env `source activate venv/bin/activate` (optional but HIGHLY recommended).
+5. Install the required packages: `pip install -r requirements.txt`.
+
+#### Env Set-Up
 4. Copy the .env.example file to .env: `cp .env.example .env`. This is where you will set the ENV variables.
-5. Copy the example_tokens.yml file to `tokens.yml` This is where you will input each Agents Access Token and Secret
+5. Copy the `cp example_tokens.yml tokens.yml` This is where you will input each Agents Access Token and Secret
 6. Set your OpenAI, and Twitter API keys in your new .env file.
-7. Run `python src/auth.py` to retrieve you Access Token and Access Token Secret
+
+#### OAUTH2 Setup
+1. Run `python src/auth.py` to retrieve you Access Token and Access Token Secret
+2.  This will output an auth url in the terminal.  Paste this url into your browser and authorize the app
+3. If the redirect does not give you a pin number and you get a no connection error paste the last string in the new url into the PIN area
 8. Paste these values in the `tokens.yml` file alongside the Agent name and strategy to run
 
 ### Execution
 
-Run `python src/main.py` once your .env is fully configured.  Note, you will need to be a subscriber to the Twitter Basic API for the Agent to fully function.  If you are using the free tier, the agent will only be able to post Tweets and not interact with the timeline.   
+Run `python src/main.py --run-engine` once your .env is fully configured.  Note, you will need to be a subscriber to the Twitter Basic API for the Agent to fully function.  If you are using the free tier, the agent will only be able to post Tweets and not interact with the timeline.   
 
 ### Deployment
 

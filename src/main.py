@@ -15,6 +15,7 @@ from langchain.llms import OpenAI
 from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
 from strategy import create_strategy
+from storage.db_interface import create_connection, close_connection, get_tweet_ids, create_table, create_reports_table, save_report_to_db
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -38,11 +39,24 @@ def cli():
 
 
 @cli.command()
-@click.option("--fetch-status", default=False, help="Fetch updates from twitter")
+@click.option(
+    "--generate-report",
+    default=False,
+    is_flag=True,  # This makes it a flag that doesn't require a value (just presence indicates True)
+    help="Generate a report.")
+@click.option(
+    "--run-engine",
+    default=False,
+    is_flag=True,  # Same as above
+    help="Run the engine.")
 @async_command
-async def main(fetch_status):
+async def main(generate_report: bool, run_engine: bool):
     client_data = fetch_clients()
     llm = OpenAI(temperature=0.9)
+
+    # create a database connection
+    conn = create_connection()
+    create_table(conn)
 
     # spawn collector, strategy, and executor for each client
     agents = []
@@ -52,25 +66,34 @@ async def main(fetch_status):
         agent_id = data["agent_id"]
         agent_name = data["user_name"]
 
-        collector = TwitterCollector(client, agent_id, params)
+        collector = TwitterCollector(agent_id, client, params)
         strategy = create_strategy(agent_id, llm, params, strategy_type)
-        executor = TwitterExecutor(client)
+        executor = TwitterExecutor(agent_id, client, conn)
 
-        agents.append((collector, strategy, executor, agent_name))
+        agents.append((collector, strategy, executor, agent_name, agent_id))
 
-    if fetch_status:
-        for collector, _, _ in agents:
-            collector.get_me()
+    if generate_report:
+        create_reports_table(conn)
+        for collector, _, _, _, agent_id in agents:
+            tweet_ids = get_tweet_ids(conn)
+            collector.generate_report(tweet_ids)
+            report = collector.generate_report(tweet_ids)
+            print(report)
+            save_report_to_db(conn, report)
 
     # run
-    await asyncio.gather(
-        *(
-            run(collector, strategy, executor, agent_name)
-            for collector, strategy, executor, agent_name in agents
+    if run_engine:
+        await asyncio.gather(
+            *(
+                run(collector, strategy, executor, agent_name, agent_id)
+                for collector, strategy, executor, agent_name, agent_id in agents
+            )
         )
-    )
 
-async def run(collector, strategy, executor, agent_name):
+    # Close the connection at the end
+    close_connection(conn)
+
+async def run(collector, strategy, executor, agent_name, agent_id):
 
     print(f"\033[92m\033[1m\n*****Running {agent_name} Engine 🚒 *****\n\033[0m\033[0m")
 
