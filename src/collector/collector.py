@@ -57,11 +57,11 @@ class TwitterCollector:
 
             ratio = likes_count / followers_count if followers_count else 0  # Avoid division by zero.
             likes_to_followers_ratios.append(ratio)
+            # TODO: fix rate limit
+            time.sleep(1)
 
         average_ratio = sum(likes_to_followers_ratios) / len(likes_to_followers_ratios) if likes_to_followers_ratios else 0  # Avoid division by zero.
-
         report = Report(agent.data.name, agent.data.id, followers_count, average_ratio)
-
         return report
 
     async def get_tweet_info(self, tweet_id: int):

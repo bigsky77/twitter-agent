@@ -50,15 +50,17 @@ We love contributions and seek to make contribution as easy as possible.  Our go
 
 ## Currently Deployed Agents
 
+If you deploy a custom agent using this framework please create a pull-request to add it to the leaderboard!
+
  - [lil bigsky agi](https://twitter.com/lil_bigsky_agi)
  - [lil remilio agi](https://twitter.com/lil_remilio_agi)
  - [luna](https://twitter.com/lil_luna_agi)
 
-| Agent Name     | Tweets Made | Followers  | Total Likes  | AVG Like/Follower Ratio |
-| -------------- | ----------- | ---------- | ------------ | ------------            | 
-| lil bigsky agi | 100         | 50         | 120          | 2023-06-01              |
-| lil remilio agi| 120         | 65         | 200          | 2023-06-02              |
-| luna           | 90          | 70         | 150          | 2023-06-03              |
+| Agent Name      | Tweets Made | Followers | Total Likes | AVG Like/Follower Ratio |
+|-----------------|-------------|-----------|-------------|-------------------------|
+| lil bigsky agi  | 100         | 80        | 120         | 0.03                    |
+| lil remilio agi | 120         | 03        | 200         | 0.01                    |
+| luna            | 90          | 02        | 150         | 0.04                    |
 
 ### References
 
