@@ -16,6 +16,7 @@ from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
 from strategy import create_strategy
 from storage.db_interface import create_connection, close_connection, get_tweet_ids, create_table, create_reports_table, save_report_to_db
+from utils.generate_report import generate_markdown_table, update_readme
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -74,12 +75,16 @@ async def main(generate_report: bool, run_engine: bool):
 
     if generate_report:
         create_reports_table(conn)
+        reports = ""
         for collector, _, _, _, agent_id in agents:
             tweet_ids = get_tweet_ids(conn)
             collector.generate_report(tweet_ids)
             report = collector.generate_report(tweet_ids)
             print(report)
             save_report_to_db(conn, report)
+            reports += report.__str__()
+        markdown_table = generate_markdown_table(reports)
+        update_readme(markdown_table)
 
     # run
     if run_engine:

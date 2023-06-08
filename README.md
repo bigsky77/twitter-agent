@@ -54,6 +54,12 @@ We love contributions and seek to make contribution as easy as possible.  Our go
  - [lil remilio agi](https://twitter.com/lil_remilio_agi)
  - [luna](https://twitter.com/lil_luna_agi)
 
+| Agent Name     | Tweets Made | Followers  | Total Likes  | AVG Like/Follower Ratio |
+| -------------- | ----------- | ---------- | ------------ | ------------            | 
+| lil bigsky agi | 100         | 50         | 120          | 2023-06-01              |
+| lil remilio agi| 120         | 65         | 200          | 2023-06-02              |
+| luna           | 90          | 70         | 150          | 2023-06-03              |
+
 ### References
 
 - [Creating a Twitter Bot with Python, OAuth 2.0, and v2 of the Twitter API](https://developer.twitter.com/en/docs/tutorials/creating-a-twitter-bot-with-python--oauth-2-0--and-v2-of-the-twi)
