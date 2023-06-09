@@ -36,7 +36,7 @@ class TwitterCollector:
         self.params = params
 
     async def run(self):
-        list_tweets = await self.retrieve_weighted_lists(5)
+        list_tweets = await self.retrieve_weighted_lists(10)
         twitter_state = TwitterState(
             list_tweets
         )

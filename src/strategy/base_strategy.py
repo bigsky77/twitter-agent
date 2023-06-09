@@ -1,6 +1,6 @@
 import random
 from langchain.docstore.document import Document
-from typing import Iterable, List, Dict, Any
+from typing import List
 from .media.gif_reply import generate_gif_response
 
 class TwitterStrategy:
@@ -39,11 +39,11 @@ class TwitterStrategy:
         probabilities = [
             0.10,  # like_timeline_tweets
             0.10,  # retweet_timeline_tweets
-            0.10,  # reply_to_timeline
+            0.00,  # reply_to_timeline
             0.00,  # gif_reply_to_timeline
             0.10,  # quote_tweet
             0.10,  # post_tweet
-            0.50,  # none
+            0.60,  # none
         ]
 
         results: List[Document] = []
@@ -116,5 +116,5 @@ class TwitterStrategy:
         return gif_id
 
     def _check_length(self, text):
-        if len(text) > 280:
+        if len(text) > 140:
             return False
