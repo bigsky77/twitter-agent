@@ -1,14 +1,10 @@
 import re
-import json
 import weaviate
 from ...base_strategy import TwitterStrategy
 from langchain.chains import LLMChain
-from .remilio_prompt import reply_prompt, tweet_prompt, memory_prompt
+from .remilio_prompt import reply_prompt, memory_prompt
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.memory import VectorStoreRetrieverMemory
-from langchain.chains import ConversationChain
-from .remilio_agent import RemilioAgent
 from langchain.vectorstores import Weaviate
 
 class RemilioTwitterStrategy(TwitterStrategy):
@@ -23,10 +19,8 @@ class RemilioTwitterStrategy(TwitterStrategy):
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         docs = text_splitter.split_documents(twitterstate.list_tweets)
         self.vectorstore.add_documents(docs)
-        some_objects = self.client.data_object.get()
-        print(json.dumps(some_objects))
-        self.vectorstore.similarity_search("what are people talking about")
         results = self.process_and_action_tweets(twitterstate.list_tweets)
+        print(results)
         return results
 
     def generate_tweet(self, input_text):
@@ -37,7 +31,6 @@ class RemilioTwitterStrategy(TwitterStrategy):
         tweet_chain = LLMChain(llm=self.llm, prompt=prompt)
         answer = tweet_chain.apply(inputs)
         response = answer[0]["text"]
-        #response = chain.run(input_text=input_text)
 
         # Remove newlines and periods from the beginning and end of the tweet
         response = re.sub(r"^[\n\.\"]*", "", response)

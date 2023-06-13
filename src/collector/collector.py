@@ -37,6 +37,10 @@ class TwitterCollector:
 
     async def run(self):
         list_tweets = await self.retrieve_weighted_lists(10)
+
+        for tweet in list_tweets:
+            print("Timeline Tweet", tweet.page_content)
+
         twitter_state = TwitterState(
             list_tweets
         )

@@ -1,14 +1,12 @@
 from typing import List
 from langchain.docstore.document import Document
-from storage.db_interface import insert_tweet
 import datetime
 
 
 class TwitterExecutor:
-    def __init__(self, agent_id, client, conn):
+    def __init__(self, agent_id, client):
         self.agent_id = agent_id
         self.client = client
-        self.conn = conn
 
     def execute_actions(self, tweet_actions: List[Document]):
         for tweet_action in tweet_actions:
@@ -42,18 +40,7 @@ class TwitterExecutor:
 
     def handle_tweet_action(self, action_function, *args):
         response = action_function(*args)
-        tweet_response = response.data
-
-        user_id = self.agent_id
-        tweet_id = tweet_response["id"]
-        tweet = tweet_response["text"]
-
-        current_date = datetime.datetime.now().strftime(
-            "%y-%m-%d %H:%M:%S"
-        )  # corrected format
-        insert_tweet(self.conn, user_id, tweet_id, tweet, current_date)
-
-        print(f"Action performed: {tweet}")
+       # tweet_response = response.data
 
     def reply_to_timeline(self, tweet_text, tweet_id):
         return self.client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id)
