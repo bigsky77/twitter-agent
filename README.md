@@ -38,7 +38,7 @@ This step is optional, but highly recommended to avoid package conflicts. Run th
 ```bash
 python -m venv venv
 ```
-
+  * [ ] 
 #### 1.3. Activate the Virtual Environment
 
 To activate the virtual environment, run the following command:
@@ -94,7 +94,7 @@ This will output an authorization URL in the terminal. Paste this URL into your 
 
 Paste the Access Token and Access Token Secret in the tokens.yml file alongside the agent name and strategy.
 
-### Execution
+## Execution
 
 #### 1. Start Weaviate
 
