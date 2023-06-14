@@ -1,4 +1,4 @@
-# 🐣 Twitter-Agent:  AI-Powered Twitter Engagement
+# 🐣 Twitter-Agent:  AI-Powered Twitter
 
 Welcome to Twitter-Agent, a powerful Python framework for orchestrating interactions on Twitter through multiple AI-powered agents. This innovative tool harnesses the power of Langchain, Tweepy, and BabyAGI, facilitating meaningful engagements with the Twitter timeline, posting AI-generated tweets, and fostering dynamic interactions with other users.
 
