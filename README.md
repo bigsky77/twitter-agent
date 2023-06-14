@@ -1,22 +1,24 @@
-#  🐣 Twitter-Agent 
+# 🐣 Twitter-Agent:  AI-Powered Twitter Engagement
 
-Twitter-Agent is a python framework for concurently running multiple AI-powered Agents on Twitter.  Each agent uses Langchain, Tweepy, and BabyAGI to interact with the timeline, post tweets, and engage with other users. This engine is designed as an initial propotype for managing a massive number of AI-agents at scale. 
+Welcome to Twitter-Agent, a powerful Python framework for orchestrating interactions on Twitter through multiple AI-powered agents. This innovative tool harnesses the power of Langchain, Tweepy, and BabyAGI, facilitating meaningful engagements with the Twitter timeline, posting AI-generated tweets, and fostering dynamic interactions with other users.
 
-## Capabilities
+Twitter-Agent serves as a pioneering prototype designed to manage a huge range of custom AI-agents effectively and at scale, paving the way for the future of intelligent social media engagement.
 
- The Twitter-Agent currently has the following capabilities: 
+## Features
 
-    Retweet: ✅ 
-    Tweet: ✅ 🤖
-    Reply to mentions: ✅ 🤖
-    Reply to replies: ✅ 🤖
-    Reply to direct messages: ✅ 🤖
-    Like tweets: ✅ 
-    Follow users: ✅ 
+Twitter-Agent provides a range of capabilities to interact with Twitter. Its features include:
 
-To use the script, you will need to follow these steps:
+- **Tweeting:** Post original content, generated from relevant timeline tweets. ✅ 🤖
+- **Retweeting:** Share tweets that align with your agent's strategy. ✅ 
+- **Replying to Mentions:** Engage with users who mention you in their tweets. ✅ 🤖
+- **Replying to Replies:** Foster dialogue by responding to replies on your tweets. ✅ 🤖
+- **Liking Tweets:** Agents show appreciation or acknowledgement by liking tweets. ✅ 
 
-# Twitter-Agent: Installation and Execution Guide
+Each of these capabilities aims to deliver a rich, interactive experience for both the agent and the human users it interacts with.
+
+Follow the steps below to embark on your AI-powered Twitter journey with Twitter-Agent!
+
+# Twitter-Agent: Installation and Execution
 This guide provides step-by-step instructions on how to install and run the `twitter-agent` application.
 
 ## Prerequisites
@@ -88,13 +90,13 @@ Run the following script to get your Access Token and Access Token Secret:
 python src/utils/auth.py
 ```
 
-This will output an authorization URL in the terminal. Paste this URL into your browser to authorize the application. If the redirect does not provide a pin number, and you encounter a "no connection" error, paste the last string from the new URL into the PIN area.
+This will output an authorization URL in the terminal. Paste this URL into your browser to authorize the application. If the redirect does not provide a pin number, and you encounter a "no connection" error, paste the last string from the new URL into the PIN area. You should see `oauth_verifier=dlkProCaCO7x9VFG1E1Yxxxxxxxxxxxxxxx` at the end of the url.  Copy and paste everyting after `oauth_verifier=`. 
 
 #### 4.2. Update Tokens File
 
 Paste the Access Token and Access Token Secret in the tokens.yml file alongside the agent name and strategy.
 
-### Execution
+## Execution
 
 #### 1. Start Weaviate
 
