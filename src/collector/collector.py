@@ -1,26 +1,12 @@
 import yaml
+import json
 import time
 from typing import Any, Dict, Iterable, List
 from langchain.docstore.document import Document
-import datetime
-
-class Report:
-    def __init__(self, agent_name, agent_id, followers_count, average_ratio):
-        self.date = datetime.datetime.now()
-        self.agent_name = agent_name
-        self.agent_id = agent_id
-        self.followers_count = followers_count
-        self.average_ratio = average_ratio
-
-    def __str__(self):
-        return (
-            f"Date: {self.date}\n"
-            f"Agent Name: {self.agent_name}\n"
-            f"Agent ID: {self.agent_id}\n"
-            f"Follower Count: {self.followers_count}\n"
-            f"Average Likes to Followers Ratio: {self.average_ratio}"
-        )
-
+from langchain.document_loaders import JSONLoader
+from langchain.text_splitter import CharacterTextSplitter
+from pathlib import Path
+from pprint import pprint
 
 class TwitterState:
     def __init__(
@@ -30,46 +16,37 @@ class TwitterState:
         self.list_tweets = list_tweets
 
 class TwitterCollector:
-    def __init__(self, USER_ID, client, params):
+    def __init__(self, USER_ID, client, vectorstore, weaviate_client):
         self.USER_ID = USER_ID
         self.client = client
-        self.params = params
+        self.vectorstore = vectorstore
+        self.weaviate_client = weaviate_client
 
     async def run(self):
-        list_tweets = await self.retrieve_weighted_lists(10)
+        list_tweets = await self.retrieve_weighted_lists(1)
 
-        for tweet in list_tweets:
-            print("Timeline Tweet", tweet.page_content)
+        pprint(list_tweets)
+
+        with self.weaviate_client.batch(
+            batch_size=1
+        ) as batch:
+            # Batch import all Questions
+            for tweet in list_tweets:
+                properties = {
+                    "tweet": tweet.page_content,
+                    "tweet_id": str(tweet.metadata["tweet_id"]),
+                }
+
+                self.weaviate_client.batch.add_data_object(
+                    properties,
+                    "Tweets",
+                )
 
         twitter_state = TwitterState(
             list_tweets
         )
-        return twitter_state
 
-    async def fetch_status(self):
-        followers = self.retrieve_followers()
-        print("Follower Count:", len(followers))
-
-    def generate_report(self, tweet_ids: List[int]):
-        agent = self.client.get_me()
-        followers_count = len(self.retrieve_followers())
-        likes_to_followers_ratios = []
-
-        for tweet_id in tweet_ids:
-            likes_response = self.client.get_liking_users(id=tweet_id)
-            likes_count = likes_response.meta['result_count']
-
-            ratio = likes_count / followers_count if followers_count else 0  # Avoid division by zero.
-            likes_to_followers_ratios.append(ratio)
-            # TODO: fix rate limit
-            time.sleep(1)
-
-        average_ratio = sum(likes_to_followers_ratios) / len(likes_to_followers_ratios) if likes_to_followers_ratios else 0  # Avoid division by zero.
-        report = Report(agent.data.name, agent.data.id, followers_count, average_ratio)
-        return report
-
-    async def get_tweet_info(self, tweet_id: int):
-        return self.client.get_tweet(tweet_id)
+        return twitter_state.list_tweets
 
     # convert to vector storable document
     async def retrieve_timeline(self, count) -> List[Document]:
@@ -108,9 +85,31 @@ class TwitterCollector:
 
         return results
 
-    async def retrieve_dms(self):
-        res = self.client.get_direct_message_events(max_results=3)
-        return res
+    def run_test(self):
+        response = (
+            self.weaviate_client.query
+            .get("Tweets", ["tweet", "tweet_id"])
+            .with_limit(2)
+            .do()
+        )
+
+        results: List[Document] = []
+        for tweet in response['data']['Get']['Tweets']:
+            docs = self._format_tweet(tweet)
+            results.extend(docs)
+
+        return results
+
+    def _format_tweet(self, tweet) -> Iterable[Document]:
+        """Format tweets into a string."""
+        metadata = {
+            "tweet_id": tweet['tweet_id'],
+            "action": "none",
+        }
+        yield Document(
+            page_content=tweet['tweet'],
+            metadata=metadata,
+        )
 
     def _format_tweets(self, tweets: List[Dict[str, Any]]) -> Iterable[Document]:
         """Format tweets into a string."""

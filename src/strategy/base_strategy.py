@@ -4,10 +4,10 @@ from typing import List
 from .media.gif_reply import generate_gif_response
 
 class TwitterStrategy:
-    def __init__(self, agent_id, llm, params):
-        self.agent_id = agent_id
+    def __init__(self, llm, twitter_client, vectorstore):
         self.llm = llm
-        self.params = params
+        self.vectorstore = vectorstore
+        self.twitter_client = twitter_client
         self.action_mapping = {
             "like_timeline_tweets": self.like_tweet,
             "retweet_timeline_tweets": self.retweet_tweet,
@@ -19,7 +19,7 @@ class TwitterStrategy:
         }
 
     def ingest(self, twitterstate):
-        results = self.process_and_action_tweets(twitterstate.list_tweets)
+        results = self.process_and_action_tweets(twitterstate)
         return results
 
     def weighted_random_choice(self, actions, probabilities):
@@ -37,13 +37,13 @@ class TwitterStrategy:
         ]
 
         probabilities = [
-            0.10,  # like_timeline_tweets
-            0.10,  # retweet_timeline_tweets
+            0.00,  # like_timeline_tweets
+            0.00,  # retweet_timeline_tweets
             0.00,  # reply_to_timeline
-            0.00,  # gif_reply_to_timeline
-            0.10,  # quote_tweet
-            0.10,  # post_tweet
-            0.60,  # none
+            0.90,  # gif_reply_to_timeline
+            0.00,  # quote_tweet
+            0.00,  # post_tweet
+            0.10,  # none
         ]
 
         results: List[Document] = []
@@ -71,10 +71,11 @@ class TwitterStrategy:
 
     def gif_reply_to_timeline(self, tweet: Document):
         response = self.generate_response(tweet.page_content)
-        media_id = self.generate_gif(tweet.page_content)
+        print(response)
+        gif_id = generate_gif_response(tweet.page_content, self.twitter_client)
         metadata = {
             "tweet_id": tweet.metadata["tweet_id"],
-            "media_id": media_id,
+            "media_id": gif_id,
             "action": "gif_reply_to_timeline",
         }
         return Document(page_content=response, metadata=metadata)
@@ -106,14 +107,10 @@ class TwitterStrategy:
         return Document(page_content=tweet.page_content, metadata=metadata)
 
     def generate_tweet(self, prompt):
-        return "hello world"
+        pass
 
     def generate_response(self, prompt):
-        return "hello world"
-
-    def generate_gif(self, prompt):
-        gif_id = generate_gif_response(prompt)
-        return gif_id
+        pass
 
     def _check_length(self, text):
         if len(text) > 140:

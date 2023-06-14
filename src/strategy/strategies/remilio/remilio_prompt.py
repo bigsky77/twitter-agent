@@ -44,10 +44,10 @@ _DEFAULT_TEMPLATE = (
 "Your goal is to write a tweet that is relevant to the recent tweets."
 "Use the context below to write a Tweet about the topic below:"
 "You must use less than 140 characters."
-"    Context: {context}"
-"    Topic: {topic}"
+"    History: {history}"
+"    Input: {input}"
 "    Tweet post:"
 )
-memory_prompt = PromptTemplate(
-    template=_DEFAULT_TEMPLATE, input_variables=["context", "topic"]
+tweet_memory_prompt = PromptTemplate(
+    template=_DEFAULT_TEMPLATE, input_variables=["history", "input"]
 )

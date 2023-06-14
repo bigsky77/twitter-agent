@@ -1,9 +1,9 @@
 import os
 import re
+import yaml
 import tweepy
 import random
 import pytz
-import yaml
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import urllib.request
@@ -17,14 +17,6 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 giphy_api_key = os.getenv("GIPHY_API", "")
-CONSUMER_KEY = os.getenv("API_KEY", "")
-CONSUMER_SECRET = os.getenv("API_SECRET_KEY", "")
-ACCESS_KEY = os.getenv("ACCESS_TOKEN", "")
-ACCESS_SECRET = os.getenv("ACCESS_TOKEN_SECRET", "")
-
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
-api = tweepy.API(auth)
 
 llm = OpenAI(temperature=0.9)
 gif_prompt = PromptTemplate(
@@ -85,7 +77,8 @@ def gif_download(gif_url):
         handler.close()
 
 
-def gif_post(gif_url_list, msg):
+def gif_post(gif_url_list, msg, twitter_client):
+    v1_api = twitter_client["v1_api"]
     """
     uploads a single random GIF and returns the media_id
     """
@@ -96,13 +89,13 @@ def gif_post(gif_url_list, msg):
     try:
         gif_download(gif_url_list[random_index])
         m = modifier(msg[random_index])
-        result = api.media_upload("image.gif")
+        result = v1_api.media_upload("image.gif")
         return result
     except Exception as e:
         print("Error occurred: ", e)
 
 
-def search_gif(query):
+def search_gif(query, twitter_client):
     """
     Searches for GIFs based on a query
     """
@@ -132,15 +125,14 @@ def search_gif(query):
         gif_urls.append(gif)
         slugs.append(slug)
 
-    media_id = gif_post(gif_urls, slugs)
+    media_id = gif_post(gif_urls, slugs, twitter_client)
     return media_id
 
 
-def generate_gif_response(text):
+def generate_gif_response(text, twitter_client):
     gif_response = None
     while not gif_response:
         gif_response = gif_chain.run(text)
 
-    res = search_gif(gif_response)
-    print("GIF Media ID", res.media_id_string)
-    return res.media_id_string
+    res = search_gif(gif_response, twitter_client)
+    return [res.media_id_string]
