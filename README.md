@@ -16,33 +16,112 @@ Twitter-Agent is a python framework for concurently running multiple AI-powered 
 
 To use the script, you will need to follow these steps:
 
-### Installation
+# Twitter-Agent: Installation and Execution Guide
+This guide provides step-by-step instructions on how to install and run the `twitter-agent` application.
 
-#### Initial Set-Up
-1. Clone the repository via `git clone https://github.com/bigsky77/twitter-agent.git` 
-2.  Change to the twitter-agent directory `cd twitter-agent` 
-3. Create a Python virtual environment `python -m venv venv` and 
-4. Activate virtual env `source activate venv/bin/activate` (optional but HIGHLY recommended).
-5. Install the required packages: `pip install -r requirements.txt`.
+## Prerequisites
+Ensure that you have `python`, `pip`, `git`, and `docker` installed on your machine. The application requires a Python virtual environment and Docker for running Weaviate.
 
-#### Env Set-Up
-4. Copy the .env.example file to .env: `cp .env.example .env`. This is where you will set the ENV variables.
-5. Copy the `cp example_tokens.yml tokens.yml` This is where you will input each Agents Access Token and Secret
-6. Set your OpenAI, and Twitter API keys in your new .env file.
+## Installation
 
-#### OAUTH2 Setup
-1. Run `python src/auth.py` to retrieve you Access Token and Access Token Secret
-2.  This will output an auth url in the terminal.  Paste this url into your browser and authorize the app
-3. If the redirect does not give you a pin number and you get a no connection error paste the last string in the new url into the PIN area
-8. Paste these values in the `tokens.yml` file alongside the Agent name and strategy to run
+### 1. Clone the Repository and Set Up the Environment
+
+#### 1.1. Clone the Repository
+Clone the repository into your local machine by running the following command:
+```bash
+git clone https://github.com/bigsky77/twitter-agent.git && cd twitter-agent
+
+```
+
+#### 1.2. Create a Python Virtual Environment
+This step is optional, but highly recommended to avoid package conflicts. Run the following command to create a virtual environment named `venv`:
+```bash
+python -m venv venv
+```
+
+#### 1.3. Activate the Virtual Environment
+
+To activate the virtual environment, run the following command:
+
+```bash
+source venv/bin/activate
+```
+
+#### 1.4. Install the Required Packages
+
+The application dependencies are listed in the requirements.txt file. Install them by running the following command:
+
+``` bash
+pip install -r requirements.txt
+```
+
+### 2. Configure Environment Variables
+
+#### 2.1. Copy the Sample Environment File
+Run the following command to copy the contents of .env.example to a new file named .env:
+
+``` bash
+cp .env.example .env
+```
+
+#### 2.2. Set API Keys
+Set your OpenAI and Twitter API keys in your new .env file. Make sure the keys are kept secure and not exposed publicly.
+
+#### 3. Configure Tokens
+When running multiple Twitter-Agents,  the engine reads the access tokens from tokens.yml in order to create multiple Tweepy client instances.
+
+#### 3.1. Copy the Sample Tokens File
+
+Run the following command to copy the contents of example_tokens.yml to a new file named tokens.yml:
+
+``` bash
+cp example_tokens.yml tokens.yml
+```
+
+### 4. OAUTH2 Setup
+
+#### 4.1. Retrieve Access Tokens
+
+Run the following script to get your Access Token and Access Token Secret:
+
+``` bash
+python src/utils/auth.py
+```
+
+This will output an authorization URL in the terminal. Paste this URL into your browser to authorize the application. If the redirect does not provide a pin number, and you encounter a "no connection" error, paste the last string from the new URL into the PIN area.
+
+#### 4.2. Update Tokens File
+
+Paste the Access Token and Access Token Secret in the tokens.yml file alongside the agent name and strategy.
 
 ### Execution
 
-Run `python src/main.py --run-engine` once your .env is fully configured.  Note, you will need to be a subscriber to the Twitter Basic API for the Agent to fully function.  If you are using the free tier, the agent will only be able to post Tweets and not interact with the timeline.   
+#### 1. Start Weaviate
 
-### Deployment
+Weaviate is used to cache tweets. Before running the main script, ensure Weaviate is up and running. This can be achieved by starting a Docker container for Weaviate in the project directory:
 
-In order to deploy this agent, sign up for a [Render](https://render.com/) or another hosting site, and connect to your GitHub repository.
+``` bash
+sudo docker-compose up -d
+```
+
+#### 2. Run the Agent
+Now that your .env file is fully configured, run the agent with the following command:
+
+``` bash
+python src/main.py --run-engine
+
+```
+
+#### 3. Test the Agent
+You can test your agent configuration by running.  This will run a strategy but not actually collect any tweets or make any posts.  Note:  You will have had to run the engine at least once for this to work.
+
+``` bash
+python src/main.py --run-engine --test
+```
+
+Note: You will need to be a subscriber to the Twitter Basic API for the agent to fully function. If you are using the free tier, the agent will only be able to post Tweets and will not interact with the timeline.
+
+That's it! You have now successfully installed and set up the twitter-agent. Happy tweeting!
 
 ### Contribute
 
@@ -52,15 +131,11 @@ We love contributions and seek to make contribution as easy as possible.  Our go
 
 If you deploy a custom agent using this framework please create a pull-request to add it to the leaderboard!
 
+Note these are all initial prototypes!
+
  - [lil bigsky agi](https://twitter.com/lil_bigsky_agi)
  - [lil remilio agi](https://twitter.com/lil_remilio_agi)
  - [luna](https://twitter.com/lil_luna_agi)
-
-| Agent Name      | Tweets Made | Followers | Total Likes | AVG Like/Follower Ratio |
-|-----------------|-------------|-----------|-------------|-------------------------|
-| lil bigsky agi  | 100         | 80        | 120         | 0.03                    |
-| lil remilio agi | 120         | 03        | 200         | 0.01                    |
-| luna            | 90          | 02        | 150         | 0.04                    |
 
 ### References
 
@@ -72,3 +147,4 @@ If you deploy a custom agent using this framework please create a pull-request t
 - [How to run your own LLM](https://blog.rfox.eu/en/Programming/How_to_run_your_own_LLM_GPT.html)
 - [Generative Simulacra](https://arxiv.org/abs/2304.03442)
 - [Rewarding Chatbots with Real-World Engagement](https://arxiv.org/abs/2303.06135)
+- [Artimis MEV Framework](https://github.com/paradigmxyz/artemis)
