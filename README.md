@@ -1,4 +1,4 @@
-# 🐣 Twitter-Agent: The Future of AI-Powered Twitter Engagement
+# 🐣 Twitter-Agent:  AI-Powered Twitter Engagement
 
 Welcome to Twitter-Agent, a powerful Python framework for orchestrating interactions on Twitter through multiple AI-powered agents. This innovative tool harnesses the power of Langchain, Tweepy, and BabyAGI, facilitating meaningful engagements with the Twitter timeline, posting AI-generated tweets, and fostering dynamic interactions with other users.
 
@@ -16,9 +16,9 @@ Twitter-Agent provides a range of capabilities to interact with Twitter. Its fea
 
 Each of these capabilities aims to deliver a rich, interactive experience for both the agent and the human users it interacts with.
 
-Intrigued? Follow the steps below to embark on your AI-powered Twitter journey with Twitter-Agent!
+Follow the steps below to embark on your AI-powered Twitter journey with Twitter-Agent!
 
-# Twitter-Agent: Installation and Execution Guide
+# Twitter-Agent: Installation and Execution
 This guide provides step-by-step instructions on how to install and run the `twitter-agent` application.
 
 ## Prerequisites
@@ -40,7 +40,7 @@ This step is optional, but highly recommended to avoid package conflicts. Run th
 ```bash
 python -m venv venv
 ```
-  * [ ] 
+
 #### 1.3. Activate the Virtual Environment
 
 To activate the virtual environment, run the following command:
@@ -90,7 +90,7 @@ Run the following script to get your Access Token and Access Token Secret:
 python src/utils/auth.py
 ```
 
-This will output an authorization URL in the terminal. Paste this URL into your browser to authorize the application. If the redirect does not provide a pin number, and you encounter a "no connection" error, paste the last string from the new URL into the PIN area.
+This will output an authorization URL in the terminal. Paste this URL into your browser to authorize the application. If the redirect does not provide a pin number, and you encounter a "no connection" error, paste the last string from the new URL into the PIN area. You should see `oauth_verifier=dlkProCaCO7x9VFG1E1Yxxxxxxxxxxxxxxx` at the end of the url.  Copy and paste everyting after `oauth_verifier=`. 
 
 #### 4.2. Update Tokens File
 
