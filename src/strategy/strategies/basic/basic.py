@@ -4,8 +4,8 @@ from langchain.chains import LLMChain
 from .prompt import reply_prompt, tweet_prompt
 
 class BasicTwitterStrategy(TwitterStrategy):
-    def __init__(self, agent_id, llm, params):
-        super().__init__(agent_id, llm, params)
+    def __init__(self, agent_id, llm):
+        super().__init__(agent_id, llm)
 
     def generate_tweet(self, input_text):
         prompt = tweet_prompt

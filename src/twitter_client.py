@@ -14,6 +14,12 @@ BEARER_TOKEN = os.getenv("BEARER_TOKEN", "")
 with open('./tokens.yml', 'r') as f:
     tokens = yaml.safe_load(f)
 
+def _fetch_v1_api(access_token, access_token_secret):
+    auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
+    auth.set_access_token(access_token, access_token_secret)
+    api = tweepy.API(auth)
+    return api
+
 def _fetch_client(access_token, access_token_secret):
     client = tweepy.Client(
             bearer_token=BEARER_TOKEN,
@@ -32,11 +38,13 @@ def fetch_clients() -> list:
     client_data = []
     for token in tokens:
         client = _fetch_client(token['token'], token['secret'])
+        v1_api = _fetch_v1_api(token['token'], token['secret'])
         strategy = token['strategy']
         user_name = token['user_name']
         agent_id = token['id']
         client_data.append({
             "client": client,
+            "v1_api": v1_api,
             "strategy": strategy,
             "user_name": user_name,
             "agent_id": agent_id,
