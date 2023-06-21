@@ -17,6 +17,26 @@ class_obj = {
             "description": "tweet id",
             "name": "tweet_id",
         },
+        {
+            "dataType": ["text"],
+            "description": "agent id",
+            "name": "agent_id",
+        },
+        {
+            "dataType": ["date"],
+            "description": "date",
+            "name": "date",
+        },
+        {
+            "dataType": ["int"],
+            "description": "follower count",
+            "name": "follower_count",
+        },
+        {
+            "dataType": ["int"],
+            "description": "like count",
+            "name": "like_count",
+        },
             ],
     "vectorizer": "text2vec-openai",
 }
@@ -25,10 +45,11 @@ class_obj = {
 # client.schema.create_class(class_obj)
 
 add_prop = {
-            "dataType": ["text"],
-            "description": "agent id",
-            "name": "agent_id",
+            "dataType": ["int"],
+            "description": "like count",
+            "name": "like_count",
         }
+
 
 client.schema.property.create("Tweets", add_prop)
 
