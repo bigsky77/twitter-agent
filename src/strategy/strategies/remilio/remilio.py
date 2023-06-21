@@ -1,7 +1,6 @@
 import re
 from ...base_strategy import TwitterStrategy
 from langchain.chains import LLMChain
-from langchain.memory import VectorStoreRetrieverMemory
 from .remilio_prompt import reply_prompt, tweet_prompt
 
 class RemilioTwitterStrategy(TwitterStrategy):

@@ -5,6 +5,7 @@ import json
 import time
 import weaviate
 import yaml
+import pdb
 import asyncio
 from functools import wraps
 
@@ -45,8 +46,11 @@ def cli():
 @click.option(
     "--test", default=False, is_flag=True, help="Test the engine."  # Same as above
 )
+@click.option(
+    "--ingest", default=False, is_flag=True, help="Ingest data into Weaviate."
+)
 @async_command
-async def main(run_engine: bool, test: bool):
+async def main(run_engine: bool, test: bool, ingest: bool):
     twitter_clients = fetch_clients()
     weaviate_client = weaviate.Client("http://localhost:8080")
 
@@ -66,6 +70,9 @@ async def main(run_engine: bool, test: bool):
         collector = TwitterCollector(agent_id, client, vectorstore, weaviate_client)
         strategy = create_strategy(llm, strategy_type, twitter_client, vectorstore)
         executor = TwitterExecutor(agent_id, client)
+
+        if ingest:
+            await collector.ingest()
 
         agents.append((collector, strategy, executor, agent_name, agent_id))
 
@@ -88,10 +95,8 @@ async def run(collector, strategy, executor, agent_name, agent_id, test):
             print(
                 f"\033[92m\033[1m\n*****Running {agent_name} Collector 🔎 *****\n\033[0m\033[0m"
             )
-            if test:
-                twitterstate = collector.run_test()
-            else:
-                twitterstate = await collector.run()
+            twitterstate = await collector.run()
+            print(f"Twitterstate: {twitterstate}")
 
             # Step 2: Pass timeline tweets to Strategy
             print(

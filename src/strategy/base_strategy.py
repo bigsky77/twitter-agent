@@ -17,6 +17,15 @@ class TwitterStrategy:
             "post_tweet": self.post_tweet,
             "none": self.none_action,
         }
+        self.probabilities = [
+            0.00,  # like_timeline_tweets
+            0.00,  # retweet_timeline_tweets
+            0.00,  # reply_to_timeline
+            0.90,  # gif_reply_to_timeline
+            0.00,  # quote_tweet
+            0.00,  # post_tweet
+            0.10,  # none
+        ]
 
     def ingest(self, twitterstate):
         results = self.process_and_action_tweets(twitterstate)
@@ -36,19 +45,9 @@ class TwitterStrategy:
             "none",
         ]
 
-        probabilities = [
-            0.00,  # like_timeline_tweets
-            0.00,  # retweet_timeline_tweets
-            0.00,  # reply_to_timeline
-            0.90,  # gif_reply_to_timeline
-            0.00,  # quote_tweet
-            0.00,  # post_tweet
-            0.10,  # none
-        ]
-
         results: List[Document] = []
         for tweet in tweets:
-            action = self.weighted_random_choice(actions, probabilities)
+            action = self.weighted_random_choice(actions, self.probabilities)
             method = self.action_mapping.get(action)
             if method:
                 doc = method(tweet)

@@ -1,6 +1,5 @@
 from typing import List
 from langchain.docstore.document import Document
-import datetime
 
 
 class TwitterExecutor:
