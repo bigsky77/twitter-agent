@@ -12,8 +12,6 @@ Twitter-Agent provides a range of capabilities to interact with Twitter. Its fea
 - **Replying to Replies:** Foster dialogue by responding to replies on your tweets. ✅ 🤖
 - **Liking Tweets:** Agents show appreciation or acknowledgement by liking tweets. ✅ 
 
-Each of these capabilities aims to deliver a rich, interactive experience for both the agent and the human users it interacts with.
-
 Follow the steps below to embark on your AI-powered Twitter journey with Twitter-Agent!
 
 # Twitter-Agent: Installation and Execution
