@@ -58,7 +58,7 @@ class AgentTrainer:
       file_id = response['id']
       return file_id
 
-   async def fine_tune_model(self, prompt, dataset="./test.jsonl", model_engine="ada", n_epochs=3, batch_size=4):
+   async def fine_tune_model(self, prompt, dataset="./tweet.jsonl", model_engine="ada", n_epochs=3, batch_size=4):
 
       training_file = self.upload_finetuning_data(dataset)
 
