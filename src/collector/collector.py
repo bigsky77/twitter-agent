@@ -1,6 +1,10 @@
-from typing import Any, Dict, Iterable, List
+import time
+import tweepy
+from datetime import datetime, timezone
+from typing import Any, Dict, Iterable, List, Optional
 from langchain.docstore.document import Document
 from pprint import pprint
+import operator
 
 
 class TwitterState:
@@ -19,24 +23,30 @@ class TwitterCollector:
         self.weaviate_client = weaviate_client
 
     async def ingest(self):
-        return await self.ingest_weighted_lists(2)
+        return await self.ingest_weighted_lists(50)
 
     async def run(self) -> TwitterState:
         response = (
-            self.weaviate_client.query.get("Tweets", ["tweet", "tweet_id", "agent_id"])
-            .with_limit(5)
+            self.weaviate_client.query.get(
+                "Tweets", ["tweet", "tweet_id", "agent_id", "date", "author_id", "like_count", "follower_count"]
+            )
+            .with_limit(100)
             .do()
         )
 
-        pprint(response)
-
+        x = 100  # number of tweets to return
+        sorted_tweets = self.sort_tweets(response, x)
         results: List[Document] = []
-        for tweet in response["data"]["Get"]["Tweets"]:
+        for tweet in sorted_tweets:
+            print("")
+            print("Date", tweet["date"])
+            print("Tweet: ", tweet["tweet"])
+            print("Like Count", tweet["like_count"])
+            print("Follower Count", tweet["follower_count"])
             docs = self._format_tweet(tweet)
             results.extend(docs)
 
         return results
-
 
     # convert to vector storable document
     async def retrieve_timeline(self, count) -> List[Document]:
@@ -66,16 +76,38 @@ class TwitterCollector:
 
         for list_data in lists:
             list_id = list_data["id"]
-            tweets = self.client.get_list_tweets(id=list_id, max_results=max_results)
-            with self.weaviate_client.batch(batch_size=4) as batch:
+            tweets = self.client.get_list_tweets(
+                id=list_id, max_results=max_results, expansions=["author_id", "attachments.media_keys"])
+            now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+            with self.weaviate_client.batch(batch_size=20) as batch:
                 # Batch import all Questions
                 print(f"Importing {len(tweets.data)} tweets from list {list_id}")
                 for tweet in tweets.data:
-                    print("Tweet Content:", tweet.text)
+                    like_count = self.client.get_liking_users(id=tweet.id).meta[
+                        "result_count"
+                    ]
+
+                    follower_count = 0
+                    for response in tweepy.Paginator(
+                        self.client.get_users_followers,
+                        tweet.author_id,
+                        max_results=1000,
+                        limit=10,
+                    ):
+                        follower_count += response.meta["result_count"]
+
+                    # pause for rate limit
+                    #time.sleep(10)
+
                     properties = {
                         "tweet": tweet.text,
                         "tweet_id": str(tweet.id),
                         "agent_id": str(self.agent_id),
+                        "author_id": str(tweet.author_id),
+                        "like_count": like_count,
+                        "follower_count": follower_count,
+                        "date": now,
                     }
 
                     self.weaviate_client.batch.add_data_object(
@@ -102,7 +134,7 @@ class TwitterCollector:
                 "action": "none",
             }
             yield Document(
-                page_content= tweet.text,
+                page_content=tweet.text,
                 metadata=metadata,
             )
 
@@ -117,3 +149,11 @@ class TwitterCollector:
                 page_content=follower.name,
                 metadata=metadata,
             )
+
+    def sort_tweets(self, data: Any, x: int) -> List[dict]:
+        tweets = data["data"]["Get"]["Tweets"]
+        valid_tweets = [t for t in tweets if t["date"] is not None]
+        sorted_tweets = sorted(
+            valid_tweets, key=operator.itemgetter("date"), reverse=True
+        )
+        return sorted_tweets[:x]

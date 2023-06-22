@@ -19,7 +19,8 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from twitter_client import fetch_clients
 from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
-from strategy import create_strategy
+from collector.trainer import AgentTrainer
+from strategy.strategy import TwitterStrategy
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -49,8 +50,11 @@ def cli():
 @click.option(
     "--ingest", default=False, is_flag=True, help="Ingest data into Weaviate."
 )
+@click.option(
+    "--train", default=False, is_flag=True, help="Train Model"
+)
 @async_command
-async def main(run_engine: bool, test: bool, ingest: bool):
+async def main(run_engine: bool, test: bool, ingest: bool, train: bool):
     twitter_clients = fetch_clients()
     weaviate_client = weaviate.Client("http://localhost:8080")
 
@@ -61,18 +65,21 @@ async def main(run_engine: bool, test: bool, ingest: bool):
     agents = []
     for twitter_client in twitter_clients:
         client = twitter_client["client"]
-        strategy_type = twitter_client["strategy"]
         agent_id = twitter_client["agent_id"]
         agent_name = twitter_client["user_name"]
 
         vectorstore = Weaviate(weaviate_client, "Remilio", "content", embeddings)
 
         collector = TwitterCollector(agent_id, client, vectorstore, weaviate_client)
-        strategy = create_strategy(llm, strategy_type, twitter_client, vectorstore)
+        strategy = TwitterStrategy(llm, twitter_client, vectorstore)
         executor = TwitterExecutor(agent_id, client)
 
         if ingest:
             await collector.ingest()
+
+        if train:
+            trainer = AgentTrainer(client, weaviate_client, OPENAI_API_KEY)
+            await trainer.run()
 
         agents.append((collector, strategy, executor, agent_name, agent_id))
 
@@ -96,13 +103,12 @@ async def run(collector, strategy, executor, agent_name, agent_id, test):
                 f"\033[92m\033[1m\n*****Running {agent_name} Collector 🔎 *****\n\033[0m\033[0m"
             )
             twitterstate = await collector.run()
-            print(f"Twitterstate: {twitterstate}")
 
             # Step 2: Pass timeline tweets to Strategy
             print(
                 f"\033[92m\033[1m\n*****Running {agent_name} Strategy 🐲*****\n\033[0m\033[0m"
             )
-            actions = strategy.ingest(twitterstate)
+            actions = strategy.run(twitterstate)
 
             # Step 4: Pass actions to Executor
             print(
