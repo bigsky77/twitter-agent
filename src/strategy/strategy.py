@@ -21,16 +21,18 @@ class TwitterStrategy:
             "none": self.none_action,
         }
         self.probabilities = [
-            0.00,  # like_timeline_tweets
-            0.00,  # retweet_timeline_tweets
-            0.90,  # reply_to_timeline
-            0.00,  # gif_reply_to_timeline
-            0.00,  # quote_tweet
-            0.00,  # post_tweet
-            0.10,  # none
+            0.02,  # like_timeline_tweets
+            0.01,  # retweet_timeline_tweets
+            0.02,  # reply_to_timeline
+            0.02,  # gif_reply_to_timeline
+            0.01,  # quote_tweet
+            0.02,  # post_tweet
+            0.90,  # none
         ]
 
-    def ingest(self, twitterstate):
+    def run(self, twitterstate):
+        print("Running strategy...")
+        print("Twitter state: ", twitterstate)
         results = self.process_and_action_tweets(twitterstate)
         return results
 
@@ -62,6 +64,24 @@ class TwitterStrategy:
         response = self.generate_tweet(tweet.page_content)
         metadata = {"action": "post_tweet"}
         return Document(page_content=response, metadata=metadata)
+
+    def generate_tweet(self, input_text):
+        print("Generating tweet...")
+        prompt = tweet_prompt
+        tweet_chain = LLMChain(llm=self.llm, prompt=prompt)
+        response = tweet_chain.run(input_text)
+
+        # Remove newlines and periods from the beginning and end of the tweet
+        response = re.sub(r"^[\n\.\"]*", "", response)
+        response = re.sub(r"[\n\.\"]*$", "", response)
+
+        _len_check = self._check_length(response)
+
+        if _len_check is False:
+            self.generate_tweet(input_text)
+
+        print(f"Generated tweet: {response}")
+        return response
 
     def reply_to_timeline(self, tweet: Document):
         response = self.generate_response(tweet.page_content)
@@ -107,24 +127,6 @@ class TwitterStrategy:
         # No action, just return metadata with action as "none"
         metadata = {"tweet_id": tweet.metadata["tweet_id"], "action": "none"}
         return Document(page_content=tweet.page_content, metadata=metadata)
-
-    def generate_tweet(self, input_text):
-        print("Generating tweet...")
-        prompt = tweet_prompt
-        tweet_chain = LLMChain(llm=self.llm, prompt=prompt)
-        response = tweet_chain.run(input_text)
-
-        # Remove newlines and periods from the beginning and end of the tweet
-        response = re.sub(r"^[\n\.\"]*", "", response)
-        response = re.sub(r"[\n\.\"]*$", "", response)
-
-        _len_check = self._check_length(response)
-
-        if _len_check is False:
-            self.generate_tweet(input_text)
-
-        print(f"Generated tweet: {response}")
-        return response
 
     def generate_response(self, input_text):
         prompt = reply_prompt

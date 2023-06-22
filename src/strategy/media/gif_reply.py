@@ -130,9 +130,7 @@ def search_gif(query, twitter_client):
 
 
 def generate_gif_response(text, twitter_client):
-    gif_response = None
-    while not gif_response:
-        gif_response = gif_chain.run(text)
+    gif_response = gif_chain.run(text)
 
     res = search_gif(gif_response, twitter_client)
     return [res.media_id_string]

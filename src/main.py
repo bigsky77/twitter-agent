@@ -19,8 +19,8 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from twitter_client import fetch_clients
 from executor.executor import TwitterExecutor
 from collector.collector import TwitterCollector
+from collector.trainer import AgentTrainer
 from strategy.strategy import TwitterStrategy
-from collector.ranker import AgentTrainer
 
 # load environment variables
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
@@ -108,7 +108,7 @@ async def run(collector, strategy, executor, agent_name, agent_id, test):
             print(
                 f"\033[92m\033[1m\n*****Running {agent_name} Strategy 🐲*****\n\033[0m\033[0m"
             )
-            actions = strategy.ingest(twitterstate)
+            actions = strategy.run(twitterstate)
 
             # Step 4: Pass actions to Executor
             print(
