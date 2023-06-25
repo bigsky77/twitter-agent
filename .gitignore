@@ -4,4 +4,8 @@ data
 venv
 tokens.yml
 image.gif
+<<<<<<< HEAD
+tweets.json
+=======
 tweets.jsonl
+>>>>>>> 6b4f5094a1e1154e16eeaa817c5e553682a0f796

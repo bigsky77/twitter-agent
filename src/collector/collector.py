@@ -1,9 +1,8 @@
 import time
 import tweepy
 from datetime import datetime, timezone
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List
 from langchain.docstore.document import Document
-from pprint import pprint
 import operator
 
 
@@ -98,7 +97,7 @@ class TwitterCollector:
                         follower_count += response.meta["result_count"]
 
                     # pause for rate limit
-                    #time.sleep(10)
+                    time.sleep(1)
 
                     properties = {
                         "tweet": tweet.text,
