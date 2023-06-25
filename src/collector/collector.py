@@ -22,26 +22,21 @@ class TwitterCollector:
         self.weaviate_client = weaviate_client
 
     async def ingest(self):
-        return await self.ingest_weighted_lists(50)
+        return await self.ingest_weighted_lists(5)
 
     async def run(self) -> TwitterState:
         response = (
             self.weaviate_client.query.get(
                 "Tweets", ["tweet", "tweet_id", "agent_id", "date", "author_id", "like_count", "follower_count"]
             )
-            .with_limit(100)
+            .with_limit(10)
             .do()
         )
 
-        x = 100  # number of tweets to return
+        x = 10  # number of tweets to return
         sorted_tweets = self.sort_tweets(response, x)
         results: List[Document] = []
         for tweet in sorted_tweets:
-            print("")
-            print("Date", tweet["date"])
-            print("Tweet: ", tweet["tweet"])
-            print("Like Count", tweet["like_count"])
-            print("Follower Count", tweet["follower_count"])
             docs = self._format_tweet(tweet)
             results.extend(docs)
 
